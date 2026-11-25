@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>chiminaca/steiner-handoff · Zero-Exploration AST Context Packing</title>
+  <meta name="description" content="Zero-exploration AST context packing and topology-aware prompt compilation for coding agents. -93.5% cloud input tokens via Hub-Penalized Kou Steiner Tree." />
+
+  <!-- OpenGraph & Twitter Card -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="chiminaca/steiner-handoff · Zero-Exploration AST Context Packing" />
+  <meta property="og:description" content="Pre-pack minimal ~3,500-token Hub-Penalized Kou Steiner AST subgraphs locally in ~38 ms with 0 idle MCP tokens." />
+  <meta property="og:url" content="https://chiminaca.github.io/steiner-handoff/" />
+  <meta property="og:image" content="https://chiminaca.github.io/steiner-handoff/og-banner.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="chiminaca/steiner-handoff · Zero-Exploration AST Context Packing" />
+  <meta name="twitter:description" content="-93.5% cloud input tokens via deterministic Tree-sitter AST + Kou Steiner context packing." />
+  <meta name="twitter:image" content="https://chiminaca.github.io/steiner-handoff/og-banner.png" />
+
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- KaTeX for Publication-Grade Equations -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous" />
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+
+  <!-- Standalone Compiled Stylesheet (Zero CDN Tailwind, Zero FOUC) -->
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body class="bg-obsidian text-[#fafafa] min-h-screen flex flex-col">
+<div id="surface-pages" class="flex-1 flex flex-col bg-obsidian text-[#fafafa] min-h-screen">
+    <!-- Editorial Microsite Sub-Header -->
+    <header class="border-b border-[#27272a] bg-obsidian">
+      <div class="max-w-[1220px] mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <svg class="w-8 h-8 shrink-0" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+            <rect x="1.5" y="1.5" width="45" height="45" rx="4" fill="#09090b" stroke="#27272a" stroke-width="1.5"/>
+            <circle cx="24" cy="24" r="5" stroke="#52525b" stroke-width="1.2" stroke-dasharray="2.5 2"/>
+            <path d="M10 11 L17 17 L31 17 L38 11 M17 17 L17 31 L10 37 M31 17 L31 31 L38 37" stroke="#14b8a6" stroke-width="2.2"/>
+            <rect x="7" y="8" width="6" height="6" fill="#fafafa"/>
+            <rect x="35" y="8" width="6" height="6" fill="#fafafa"/>
+            <rect x="7" y="34" width="6" height="6" fill="#fafafa"/>
+            <rect x="35" y="34" width="6" height="6" fill="#fafafa"/>
+          </svg>
+          <div>
+            <span class="font-sans font-extrabold tracking-tight text-lg text-[#fafafa]">steiner-handoff</span>
+            <span class="ml-2 font-mono text-[11px] px-1.5 py-0.5 border border-[#27272a] text-tealAccent-bright">v0.1.0</span>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-4 font-mono text-xs">
+          <a href="#pages-compiler-demo" class="hidden md:inline text-[#a1a1aa] hover:text-[#fafafa] transition-colors">Compiler Demo</a>
+          <a href="#pages-calc" class="hidden md:inline text-[#a1a1aa] hover:text-[#fafafa] transition-colors">Quota Calculator</a>
+          <a href="#pages-steiner-viz" class="hidden md:inline text-[#a1a1aa] hover:text-[#fafafa] transition-colors">Steiner Graph</a>
+          <a href="#source-drawer" class="hidden md:inline text-[#a1a1aa] hover:text-[#fafafa] transition-colors">Source Files</a>
+          <a
+            href="https://github.com/chiminaca/steiner-handoff"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-1.5 px-3 py-1.5 border border-[#3f3f46] bg-[#111114] hover:border-tealAccent text-[#fafafa] transition-colors"
+          >
+            <span>GitHub Repo</span>
+            <svg class="w-3.5 h-3.5 text-tealAccent-bright" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M4.5 11.5L11.5 4.5M6 4.5h5.5V10"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Microsite Body -->
+    <main class="max-w-[1220px] w-full mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-12 sm:space-y-16">
+
+      <!-- ===============================================================
+           MICROSITE SECTION 1: SWISS EDITORIAL SPLIT-GRID HERO FRAME
+           =============================================================== -->
+      <section class="relative border border-[#27272a] bg-[#0b0b0e]">
+        <div class="cad-tick cad-tick-tl"></div>
+        <div class="cad-tick cad-tick-tr"></div>
+        <div class="cad-tick cad-tick-bl"></div>
+        <div class="cad-tick cad-tick-br"></div>
+
+        <!-- 24px Integer-Pixel Matrix Grid -->
+        <svg class="absolute inset-0 w-full h-full pointer-events-none z-0" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs>
+            <pattern id="hero-matrix-pages" width="24" height="24" patternUnits="userSpaceOnUse">
+              <path d="M 24 0 L 0 0 0 24" fill="none" stroke="rgba(255,255,255,0.032)" stroke-width="1" shape-rendering="crispEdges" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#hero-matrix-pages)" />
+        </svg>
+
+        <div class="relative z-10 grid grid-cols-1 lg:grid-cols-[minmax(0,1.3fr)_1px_minmax(0,0.95fr)]">
+          <!-- Hero Left -->
+          <div class="p-6 sm:p-10 flex flex-col justify-between gap-8">
+            <div class="space-y-5">
+              <div class="font-mono text-[11px] sm:text-xs tracking-[0.16em] text-[#a1a1aa] uppercase">
+                SWISS EDITORIAL SPECIFICATION <span class="text-tealAccent">·</span> ZERO-EXPLORATION ORCHESTRATION
+              </div>
+
+              <div class="flex items-start sm:items-center gap-4">
+                <svg class="w-12 h-12 sm:w-14 sm:h-14 shrink-0" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+                  <rect x="1.5" y="1.5" width="45" height="45" rx="4" fill="#09090b" stroke="#27272a" stroke-width="1.5"/>
+                  <path d="M10 11 L24 24 M38 11 L24 24 M10 37 L24 24 M38 37 L24 24 M24 6 L24 42 M6 24 L42 24" stroke="#27272a" stroke-width="1"/>
+                  <circle cx="24" cy="24" r="6" fill="#09090b" stroke="#52525b" stroke-width="1.2" stroke-dasharray="2.5 2"/>
+                  <circle cx="24" cy="24" r="2" fill="#52525b"/>
+                  <path d="M10 11 L17 17 L31 17 L38 11 M17 17 L17 31 L10 37 M31 17 L31 31 L38 37" stroke="#14b8a6" stroke-width="2" stroke-linecap="square"/>
+                  <circle cx="17" cy="17" r="2" fill="#14b8a6"/>
+                  <circle cx="31" cy="17" r="2" fill="#14b8a6"/>
+                  <circle cx="17" cy="31" r="2" fill="#14b8a6"/>
+                  <circle cx="31" cy="31" r="2" fill="#14b8a6"/>
+                  <rect x="7" y="8" width="6" height="6" fill="#fafafa"/>
+                  <rect x="35" y="8" width="6" height="6" fill="#fafafa"/>
+                  <rect x="7" y="34" width="6" height="6" fill="#fafafa"/>
+                  <rect x="35" y="34" width="6" height="6" fill="#fafafa"/>
+                </svg>
+                <h1 class="font-sans text-3xl sm:text-5xl font-extrabold tracking-[-0.04em] leading-[1.02] text-[#fafafa]">
+                  Stop Burning Cloud Quota on <span class="text-tealAccent">grep</span>.
+                </h1>
+              </div>
+
+              <p class="text-[#d4d4d8] text-base sm:text-lg leading-relaxed max-w-2xl">
+                <code class="font-mono text-sm text-tealAccent-bright">steiner-handoff</code> pre-packs a mathematically minimal Hub-Penalized Kou Steiner AST subgraph locally in ~38 ms and compiles topology-aware briefs before any coding agent touches your repository.
+              </p>
+
+              <!-- 4 Crisp Telemetry Pills -->
+              <div class="flex flex-wrap gap-2 font-mono text-[11px] sm:text-xs tabular-nums pt-1">
+                <span class="border border-[#3f3f46] bg-obsidian px-3 py-1.5 text-[#e4e4e7]">
+                  <strong class="text-tealAccent-bright">0%</strong> INDEX QUOTA
+                </span>
+                <span class="border border-[#3f3f46] bg-obsidian px-3 py-1.5 text-[#e4e4e7]">
+                  <strong class="text-tealAccent-bright">~38ms</strong> PACK
+                </span>
+                <span class="border border-[#3f3f46] bg-obsidian px-3 py-1.5 text-[#e4e4e7]">
+                  <strong class="text-tealAccent-bright">0</strong> IDLE MCP
+                </span>
+                <span class="border border-tealAccent/50 bg-tealAccent/10 px-3 py-1.5 text-tealAccent-bright font-semibold">
+                  -93.5% CLOUD TOKENS
+                </span>
+              </div>
+            </div>
+
+            <!-- Action CTAs -->
+            <div class="flex flex-wrap items-center gap-3 font-mono text-xs pt-2">
+              <a
+                href="#pages-compiler-demo"
+                class="inline-flex items-center gap-2 px-4 py-2.5 bg-tealAccent hover:bg-tealAccent-bright text-obsidian font-bold tracking-wide transition-colors"
+              >
+                <span>Try Compiler Demo</span>
+                <svg class="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M3 8h10M9 4l4 4-4 4"/>
+                </svg>
+              </a>
+              <a
+                href="#pages-calc"
+                class="inline-flex items-center gap-2 px-4 py-2.5 border border-[#3f3f46] bg-obsidian hover:border-tealAccent text-[#fafafa] transition-colors"
+              >
+                <span>Open Quota Simulator</span>
+              </a>
+              <button
+                type="button"
+                onclick="copyText('git clone https://github.com/chiminaca/steiner-handoff.git', 'Copied git clone command')"
+                class="inline-flex items-center gap-2 px-4 py-2.5 border border-[#27272a] bg-[#111114] hover:border-[#52525b] text-[#a1a1aa] hover:text-[#fafafa] transition-colors"
+              >
+                <svg class="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <rect x="5.5" y="5.5" width="8" height="8" rx="1"/>
+                  <path d="M3.5 10.5h-1a1 1 0 01-1-1v-7a1 1 0 011-1h7a1 1 0 011 1v1"/>
+                </svg>
+                <span>Copy Clone Command</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Vertical Divider -->
+          <div class="bg-[#27272a] h-px w-full lg:h-full lg:w-px"></div>
+
+          <!-- Hero Right: Live Architectural Telemetry & Exact Benchmark -->
+          <div class="p-6 sm:p-10 bg-obsidian/60 flex flex-col justify-between gap-7 tabular-nums">
+            <div class="space-y-4">
+              <div class="flex items-center justify-between border-b border-[#27272a] pb-3 font-mono text-[11px] uppercase tracking-wider text-[#71717a]">
+                <span>LIVE ARCHITECTURAL TELEMETRY</span>
+                <span class="text-tealAccent-bright">HUB :8088</span>
+              </div>
+
+              <div class="grid grid-cols-2 gap-3 font-mono text-xs">
+                <div class="border border-[#27272a] bg-[#0d0d10] p-3">
+                  <div class="text-[10px] text-[#71717a] uppercase">Sparse PageRank</div>
+                  <div class="text-lg font-bold text-[#fafafa] mt-1">9.5 ms</div>
+                </div>
+                <div class="border border-[#27272a] bg-[#0d0d10] p-3">
+                  <div class="text-[10px] text-[#71717a] uppercase">Kou Steiner Solve</div>
+                  <div class="text-lg font-bold text-tealAccent-bright mt-1">6.5 ms</div>
+                </div>
+                <div class="border border-[#27272a] bg-[#0d0d10] p-3">
+                  <div class="text-[10px] text-[#71717a] uppercase">Hard Pack Budget</div>
+                  <div class="text-lg font-bold text-[#fafafa] mt-1">3,500 tok</div>
+                </div>
+                <div class="border border-[#27272a] bg-[#0d0d10] p-3">
+                  <div class="text-[10px] text-[#71717a] uppercase">Anti-Swarm Gate</div>
+                  <div class="text-lg font-bold text-tealAccent-bright mt-1">&lt; 3 files</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Exact 860k vs 56k Proportional Visual -->
+            <div class="space-y-3 pt-2 border-t border-[#27272a]">
+              <div class="flex items-baseline justify-between font-mono">
+                <span class="text-[11px] uppercase tracking-wider text-[#a1a1aa]">5-File + 2-Loop Input Burn</span>
+                <span class="text-2xl font-bold text-tealAccent">-93.5%</span>
+              </div>
+
+              <div class="space-y-2 font-mono text-xs">
+                <div class="w-full h-9 bg-[#27272a] border border-[#3f3f46] px-3 flex items-center justify-between text-[#d4d4d8]">
+                  <span>Pull Swarm + MCP</span>
+                  <span class="text-[#a1a1aa]">860,000 tok</span>
+                </div>
+                <div class="w-full h-9 bg-tealAccent/[0.04] border border-dashed border-[#3f3f46] flex items-center">
+                  <div class="h-full bg-tealAccent shrink-0" style="width: 6.51%;"></div>
+                  <div class="flex-1 px-3 flex items-center justify-between text-[#fafafa] min-w-0">
+                    <span class="truncate">steiner-handoff Push (6.51%)</span>
+                    <span class="text-tealAccent-bright font-bold ml-2 shrink-0">56,000 tok</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===============================================================
+           MICROSITE SECTION 2: 3-COLUMN HAIRLINE SPEC STRIP
+           =============================================================== -->
+      <section class="border border-[#27272a] bg-[#0b0b0e] grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-[#27272a]">
+        <div class="p-6 space-y-2.5">
+          <div class="font-mono text-xs font-bold text-tealAccent-bright tracking-wider">01 / ZERO-TOKEN TREE-SITTER AST</div>
+          <h2 class="font-sans text-lg font-bold text-[#fafafa]">Local Deterministic Indexing</h2>
+          <p class="text-sm text-[#a1a1aa] leading-relaxed">
+            Parses definitions, imports, and call edges strictly on-host via <code class="font-mono text-xs text-[#e4e4e7]">--code-only</code>. Never sends source files to a cloud LLM just to build a graph index.
+          </p>
+        </div>
+
+        <div class="p-6 space-y-2.5">
+          <div class="font-mono text-xs font-bold text-tealAccent-bright tracking-wider">02 / HUB-PENALIZED KOU STEINER</div>
+          <h2 class="font-sans text-lg font-bold text-[#fafafa]">Gravity-Well Hub Bypass</h2>
+          <p class="text-sm text-[#a1a1aa] leading-relaxed">
+            Logarithmic degree penalties steer terminal bridges around bloated <code class="font-mono text-xs text-[#e4e4e7]">utils.py</code> hubs while preserving <code class="font-mono text-xs text-[#e4e4e7]">enrich_graph.py</code> architectural invariants.
+          </p>
+        </div>
+
+        <div class="p-6 space-y-2.5">
+          <div class="font-mono text-xs font-bold text-tealAccent-bright tracking-wider">03 / TIER-1 PRIVACY FIREWALL</div>
+          <h2 class="font-sans text-lg font-bold text-[#fafafa]">Physical Mesh Isolation</h2>
+          <p class="text-sm text-[#a1a1aa] leading-relaxed">
+            Repositories flagged <code class="font-mono text-xs text-[#e4e4e7]">private: true</code> are physically excluded from <code class="font-mono text-xs text-[#e4e4e7]">global-graph.json</code> and locked to local GPU inference endpoints.
+          </p>
+        </div>
+      </section>
+
+      <!-- ===============================================================
+           MICROSITE SECTION 3: INTERACTIVE PROMPT COMPILER DEMO
+           =============================================================== -->
+      <section id="pages-compiler-demo" class="scroll-mt-20 space-y-5">
+        <div class="flex flex-wrap items-end justify-between gap-3 border-b border-[#27272a] pb-3">
+          <div>
+            <div class="font-mono text-[11px] uppercase tracking-[0.14em] text-tealAccent-bright">INTERACTIVE COMPILER SANDBOX</div>
+            <h2 class="font-sans text-2xl sm:text-3xl font-extrabold tracking-tight text-[#fafafa] mt-1">
+              Declarative Topology <svg class="w-3.5 h-3.5 inline-block text-tealAccent-bright" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg> Compiled Handoff Prompt
+            </h2>
+          </div>
+          <span class="font-mono text-xs text-[#71717a]">compiler/build_prompt.py</span>
+        </div>
+
+        <div class="border border-[#27272a] bg-[#0b0b0e] grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-[#27272a]">
+          <!-- Left: Controls + Live topology.yaml -->
+          <div class="p-5 sm:p-6 flex flex-col gap-5">
+            <div class="space-y-4 font-mono text-xs">
+              <!-- Preset Switcher -->
+              <div>
+                <div class="text-[11px] uppercase tracking-wider text-[#a1a1aa] mb-2">Target Agent Preset</div>
+                <div class="grid grid-cols-3 gap-2">
+                  <button type="button" data-compiler-preset="antigravity" onclick="setCompilerPreset('antigravity')" class="py-2 px-2 border border-tealAccent bg-tealAccent/15 text-tealAccent-bright font-semibold transition-colors">Antigravity</button>
+                  <button type="button" data-compiler-preset="claude-code" onclick="setCompilerPreset('claude-code')" class="py-2 px-2 border border-[#27272a] bg-obsidian text-[#a1a1aa] hover:text-[#fafafa] transition-colors">Claude Code</button>
+                  <button type="button" data-compiler-preset="aider" onclick="setCompilerPreset('aider')" class="py-2 px-2 border border-[#27272a] bg-obsidian text-[#a1a1aa] hover:text-[#fafafa] transition-colors">Aider</button>
+                </div>
+              </div>
+
+              <!-- Output Artifact Switcher -->
+              <div>
+                <div class="text-[11px] uppercase tracking-wider text-[#a1a1aa] mb-2">Compiled Output Target</div>
+                <div class="grid grid-cols-2 gap-2">
+                  <button type="button" data-compiler-target="full" onclick="setCompilerTarget('full')" class="py-2 px-2.5 border border-tealAccent bg-tealAccent/15 text-tealAccent-bright font-semibold truncate transition-colors">WEBCHAT_SYSTEM_PROMPT.md</button>
+                  <button type="button" data-compiler-target="compact" onclick="setCompilerTarget('compact')" class="py-2 px-2.5 border border-[#27272a] bg-obsidian text-[#a1a1aa] hover:text-[#fafafa] truncate transition-colors">WEBCHAT_COMPACT_BOOSTER.md</button>
+                </div>
+              </div>
+
+              <!-- Feature Toggles -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                <label class="flex items-center gap-2.5 p-2.5 border border-[#27272a] bg-obsidian cursor-pointer select-none hover:border-[#3f3f46]">
+                  <input id="compiler-opt-gpu" type="checkbox" checked onchange="updateCompilerDemo()" class="w-3.5 h-3.5 accent-[#14b8a6]" />
+                  <span class="text-[#e4e4e7]">Local GPU Offload (Ollama)</span>
+                </label>
+                <label class="flex items-center gap-2.5 p-2.5 border border-[#27272a] bg-obsidian cursor-pointer select-none hover:border-[#3f3f46]">
+                  <input id="compiler-opt-privacy" type="checkbox" checked onchange="updateCompilerDemo()" class="w-3.5 h-3.5 accent-[#14b8a6]" />
+                  <span class="text-[#e4e4e7]">Tier-1 Privacy Firewall</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Live topology.yaml Preview -->
+            <div class="flex-1 flex flex-col border border-[#27272a] bg-obsidian">
+              <div class="px-3.5 py-2 border-b border-[#27272a] bg-[#111114] flex items-center justify-between font-mono text-[11px] text-[#a1a1aa]">
+                <span>topology.yaml (Input SSOT)</span>
+                <span class="text-[#71717a]">gitignored</span>
+              </div>
+              <pre id="compiler-yaml-preview" class="p-4 font-mono text-xs leading-relaxed text-[#d4d4d8] overflow-x-auto flex-1"></pre>
+            </div>
+          </div>
+
+          <!-- Right: Live Compiled Markdown Handoff Prompt -->
+          <div class="p-5 sm:p-6 flex flex-col gap-4 bg-obsidian/50">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div class="flex items-center gap-2 font-mono text-xs">
+                <span class="w-2 h-2 bg-tealAccent inline-block"></span>
+                <span id="compiler-output-filename" class="font-semibold text-[#fafafa]">dist/WEBCHAT_SYSTEM_PROMPT.md</span>
+                <span id="compiler-token-count" class="px-2 py-0.5 border border-[#27272a] bg-[#111114] text-tealAccent-bright text-[11px] tabular-nums">~410 tok</span>
+              </div>
+              <button
+                type="button"
+                onclick="copyCompiledPrompt()"
+                class="inline-flex items-center gap-1.5 px-3 py-1.5 border border-tealAccent/60 bg-tealAccent/10 hover:bg-tealAccent hover:text-obsidian text-tealAccent-bright font-mono text-xs font-semibold transition-colors"
+              >
+                <svg class="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <rect x="5.5" y="5.5" width="8" height="8" rx="1"/>
+                  <path d="M3.5 10.5h-1a1 1 0 01-1-1v-7a1 1 0 011-1h7a1 1 0 011 1v1"/>
+                </svg>
+                <span>Copy Compiled Prompt</span>
+              </button>
+            </div>
+
+            <pre id="compiler-md-preview" class="p-4 border border-[#27272a] bg-obsidian font-mono text-xs leading-relaxed text-[#e4e4e7] overflow-x-auto max-h-[430px] whitespace-pre-wrap flex-1"></pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===============================================================
+           MICROSITE SECTION 4: SYNCHRONIZED QUOTA CALCULATOR
+           =============================================================== -->
+      <section id="pages-calc" class="scroll-mt-20 space-y-5">
+        <div class="flex flex-wrap items-end justify-between gap-3 border-b border-[#27272a] pb-3">
+          <div>
+            <div class="font-mono text-[11px] uppercase tracking-[0.14em] text-tealAccent-bright">QUADRATIC ACCUMULATION MODEL</div>
+            <h2 class="font-sans text-2xl sm:text-3xl font-extrabold tracking-tight text-[#fafafa] mt-1">
+              Live Workload Quota Calculator
+            </h2>
+          </div>
+          <button
+            type="button"
+            onclick="resetCalculator()"
+            class="font-mono text-xs text-[#a1a1aa] hover:text-tealAccent-bright border border-[#27272a] px-3 py-1 bg-[#111114] transition-colors"
+          >
+            Reset to 5-File Benchmark
+          </button>
+        </div>
+
+        <div class="border border-[#27272a] bg-[#0b0b0e] p-5 sm:p-8 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] gap-8 items-center">
+          <!-- Controls -->
+          <div class="space-y-5 font-mono text-xs tabular-nums">
+            <div>
+              <div class="flex justify-between mb-1.5">
+                <label for="calc-files-pages" class="text-[#a1a1aa]">Files Touched in Task</label>
+                <span class="text-[#fafafa] font-bold"><span data-calc-out="files">5</span> files</span>
+              </div>
+              <input id="calc-files-pages" data-calc-slider="files" type="range" min="1" max="12" value="5" class="swiss-slider" oninput="updateCalculator('files', this.value)" />
+            </div>
+
+            <div>
+              <div class="flex justify-between mb-1.5">
+                <label for="calc-loops-pages" class="text-[#a1a1aa]">Refactor / Revision Loops</label>
+                <span class="text-[#fafafa] font-bold"><span data-calc-out="loops">2</span> loops</span>
+              </div>
+              <input id="calc-loops-pages" data-calc-slider="loops" type="range" min="0" max="5" value="2" class="swiss-slider" oninput="updateCalculator('loops', this.value)" />
+            </div>
+
+            <div>
+              <div class="flex justify-between mb-1.5">
+                <label for="calc-workers-pages" class="text-[#a1a1aa]">Max Parallel Swarm Workers</label>
+                <span class="text-[#fafafa] font-bold"><span data-calc-out="workers">3</span> workers</span>
+              </div>
+              <input id="calc-workers-pages" data-calc-slider="workers" type="range" min="1" max="6" value="3" class="swiss-slider" oninput="updateCalculator('workers', this.value)" />
+            </div>
+
+            <div>
+              <div class="flex justify-between mb-1.5">
+                <span class="text-[#a1a1aa]">Persistent MCP Schema Tax / Turn</span>
+                <span class="text-tealAccent-bright font-bold" data-calc-out="mcpLabel">12,000 tok</span>
+              </div>
+              <div class="grid grid-cols-3 gap-2">
+                <button type="button" data-mcp-btn="0" onclick="updateCalculator('mcp', 0)" class="py-1.5 border border-[#27272a] bg-obsidian text-[#a1a1aa] hover:text-[#fafafa] transition-colors">0 tok</button>
+                <button type="button" data-mcp-btn="12000" onclick="updateCalculator('mcp', 12000)" class="py-1.5 border border-tealAccent bg-tealAccent/15 text-tealAccent-bright font-semibold transition-colors">12k tok</button>
+                <button type="button" data-mcp-btn="24000" onclick="updateCalculator('mcp', 24000)" class="py-1.5 border border-[#27272a] bg-obsidian text-[#a1a1aa] hover:text-[#fafafa] transition-colors">24k tok</button>
+              </div>
+            </div>
+
+            <label class="flex items-center gap-2.5 pt-1 cursor-pointer select-none text-xs text-[#a1a1aa] hover:text-[#fafafa]">
+              <input type="checkbox" data-calc-gpu onchange="updateCalculator('localGpu', this.checked)" class="w-3.5 h-3.5 accent-[#14b8a6]" />
+              <span>Offload &lt;3-file patches &amp; refactors to Local GPU (<code class="text-tealAccent-bright">0%</code> quota)</span>
+            </label>
+          </div>
+
+          <!-- Synchronized Bars -->
+          <div class="border border-[#27272a] bg-obsidian p-5 space-y-4 tabular-nums font-mono text-xs">
+            <div class="flex items-center justify-between border-b border-[#27272a] pb-3 gap-2">
+              <div>
+                <div class="text-[10px] uppercase tracking-wider text-[#71717a]">Simulated Cloud Savings</div>
+                <div class="text-3xl font-bold text-tealAccent" data-calc-out="pctSaved">-93.5%</div>
+              </div>
+              <div data-calc-out="gateBadge" class="px-2.5 py-1 border border-[#27272a] bg-[#111114] text-[10.5px] text-[#a1a1aa] text-right">
+                LEAN SWARM MODE (3 SLICES)
+              </div>
+            </div>
+
+            <div class="space-y-1">
+              <div class="flex justify-between text-[11px]">
+                <span class="text-[#a1a1aa]">Pull Swarm + MCP</span>
+                <span class="text-coralWarn font-semibold" data-calc-out="tokMcp">860,000 tok</span>
+              </div>
+              <div class="w-full h-3.5 bg-[#18181b] border border-[#27272a] overflow-hidden">
+                <div data-calc-bar="mcp" class="h-full bg-[#ef4444]/65 transition-all duration-200" style="width: 100%"></div>
+              </div>
+            </div>
+
+            <div class="space-y-1">
+              <div class="flex justify-between text-[11px]">
+                <span class="text-[#a1a1aa]">Static Dump (Repomix)</span>
+                <span class="text-[#fafafa]" data-calc-out="tokDump">520,000 tok</span>
+              </div>
+              <div class="w-full h-3.5 bg-[#18181b] border border-[#27272a] overflow-hidden">
+                <div data-calc-bar="dump" class="h-full bg-[#71717a] transition-all duration-200" style="width: 60.5%"></div>
+              </div>
+            </div>
+
+            <div class="space-y-1">
+              <div class="flex justify-between text-[11px]">
+                <span class="text-[#a1a1aa]">AST Signatures (RepoMap)</span>
+                <span class="text-[#fafafa]" data-calc-out="tokMap">255,000 tok</span>
+              </div>
+              <div class="w-full h-3.5 bg-[#18181b] border border-[#27272a] overflow-hidden">
+                <div data-calc-bar="map" class="h-full bg-[#a1a1aa] transition-all duration-200" style="width: 29.7%"></div>
+              </div>
+            </div>
+
+            <div class="space-y-1">
+              <div class="flex justify-between text-[11px]">
+                <span class="text-[#fafafa] font-semibold">steiner-handoff (Push)</span>
+                <span class="text-tealAccent-bright font-bold" data-calc-out="tokSteiner">56,000 tok</span>
+              </div>
+              <div class="w-full h-4 bg-tealAccent/[0.06] border border-dashed border-tealAccent/40 overflow-hidden">
+                <div data-calc-bar="steiner" class="h-full bg-tealAccent transition-all duration-200" style="width: 6.51%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===============================================================
+           MICROSITE SECTION 5: SYNCHRONIZED STEINER GRAPH VISUALIZER
+           =============================================================== -->
+      <section id="pages-steiner-viz" class="scroll-mt-20 space-y-5">
+        <div class="flex flex-wrap items-end justify-between gap-3 border-b border-[#27272a] pb-3">
+          <div>
+            <div class="font-mono text-[11px] uppercase tracking-[0.14em] text-tealAccent-bright">TOPOLOGICAL PRUNING ENGINE</div>
+            <h2 class="font-sans text-2xl sm:text-3xl font-extrabold tracking-tight text-[#fafafa] mt-1">
+              Hub-Penalized Kou Steiner Visualizer
+            </h2>
+          </div>
+
+          <div class="inline-flex border border-[#27272a] bg-[#0b0b0e] p-0.5 font-mono text-[11px]">
+            <button
+              type="button"
+              data-steiner-btn="steiner"
+              onclick="setSteinerMode('steiner')"
+              class="px-3 py-1.5 bg-tealAccent/20 text-tealAccent-bright border border-tealAccent/50 font-semibold transition-colors"
+            >
+              Hub-Penalized Kou Steiner (3.4k tok)
+            </button>
+            <button
+              type="button"
+              data-steiner-btn="naive"
+              onclick="setSteinerMode('naive')"
+              class="px-3 py-1.5 text-[#a1a1aa] hover:text-[#fafafa] border border-transparent transition-colors"
+            >
+              Naive Shortest Path (28.4k tok)
+            </button>
+          </div>
+        </div>
+
+        <div class="border border-[#27272a] bg-[#0b0b0e] overflow-hidden">
+          <!-- Equation & Status Header -->
+          <div class="px-5 py-3.5 bg-obsidian border-b border-[#27272a] flex flex-wrap items-center justify-between gap-4">
+            <div id="math-steiner-eq-pages" class="font-mono text-xs sm:text-sm text-[#e4e4e7]">
+              w'(u, v) = w(u, v) * (1 + alpha * ln(1 + deg(v)))
+            </div>
+            <div class="flex items-center gap-4 font-mono text-xs tabular-nums">
+              <span class="text-[#a1a1aa]">Nodes Packed: <strong data-steiner-nodes class="text-[#fafafa]">5 / 14</strong></span>
+              <span class="text-[#a1a1aa]">Pack Size: <strong data-steiner-tokens class="text-tealAccent-bright">3,420 tok</strong></span>
+            </div>
+          </div>
+
+          <div class="px-5 py-2 bg-[#111114] border-b border-[#27272a] font-mono text-xs">
+            <span data-steiner-status class="text-tealAccent-bright font-medium">
+              ACTIVE: Hub-Penalized Kou Steiner (&alpha; = 1.4) &mdash; core/utils.py (deg=42) bypassed
+            </span>
+          </div>
+
+          <!-- Synchronized SVG Graph -->
+          <div class="p-4 sm:p-6 overflow-x-auto bg-obsidian">
+            <svg class="min-w-[680px] w-full h-auto" viewBox="0 0 780 290" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <pattern id="graph-grid-pages" width="20" height="20" patternUnits="userSpaceOnUse">
+                  <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.025)" stroke-width="1"/>
+                </pattern>
+              </defs>
+              <rect width="780" height="290" fill="url(#graph-grid-pages)"/>
+
+              <g data-graph-layer="naive-noise" opacity="0.22" class="transition-opacity duration-300">
+                <line x1="390" y1="145" x2="255" y2="52" stroke="#f87171" stroke-width="1.4" stroke-dasharray="3 3"/>
+                <line x1="390" y1="145" x2="525" y2="52" stroke="#f87171" stroke-width="1.4" stroke-dasharray="3 3"/>
+                <line x1="390" y1="145" x2="255" y2="242" stroke="#f87171" stroke-width="1.4" stroke-dasharray="3 3"/>
+                <line x1="390" y1="145" x2="525" y2="242" stroke="#f87171" stroke-width="1.4" stroke-dasharray="3 3"/>
+                <line x1="390" y1="145" x2="390" y2="38" stroke="#f87171" stroke-width="1.4" stroke-dasharray="3 3"/>
+                <line x1="390" y1="145" x2="390" y2="256" stroke="#f87171" stroke-width="1.4" stroke-dasharray="3 3"/>
+
+                <g fill="#161b22" stroke="#52525b" stroke-width="1">
+                  <rect x="195" y="34" width="118" height="26" rx="3"/>
+                  <rect x="467" y="34" width="118" height="26" rx="3"/>
+                  <rect x="195" y="230" width="118" height="26" rx="3"/>
+                  <rect x="467" y="230" width="118" height="26" rx="3"/>
+                  <rect x="335" y="16" width="110" height="24" rx="3"/>
+                  <rect x="335" y="252" width="110" height="24" rx="3"/>
+                </g>
+                <g fill="#8b949e" font-family="JetBrains Mono, monospace" font-size="9.5" text-anchor="middle">
+                  <text x="254" y="51">legacy/csv_dump.py</text>
+                  <text x="526" y="51">billing/pdf_tax.py</text>
+                  <text x="254" y="247">auth/ldap_sync.py</text>
+                  <text x="526" y="247">cli/debug_trace.py</text>
+                  <text x="390" y="32">metrics/prom.py</text>
+                  <text x="390" y="268">mail/smtp_pool.py</text>
+                </g>
+              </g>
+
+              <g data-graph-layer="naive-edges" opacity="0.14" class="transition-opacity duration-300">
+                <line x1="115" y1="82" x2="390" y2="145" stroke="#f87171" stroke-width="2.2"/>
+                <line x1="115" y1="212" x2="390" y2="145" stroke="#f87171" stroke-width="2.2"/>
+                <line x1="665" y1="145" x2="390" y2="145" stroke="#f87171" stroke-width="2.2"/>
+              </g>
+
+              <g data-graph-layer="steiner-edges" opacity="1" class="transition-opacity duration-300">
+                <path d="M 115 82 L 245 102 L 535 102 L 665 145" stroke="#14b8a6" stroke-width="2.4" fill="none"/>
+                <path d="M 115 212 L 245 190 L 245 102" stroke="#14b8a6" stroke-width="2.4" fill="none"/>
+              </g>
+
+              <g>
+                <circle data-graph-hub-ring cx="390" cy="145" r="38" fill="#09090b" stroke="#3f3f46" stroke-width="1.5" stroke-dasharray="4 3"/>
+                <text x="390" y="141" fill="#a1a1aa" font-family="JetBrains Mono, monospace" font-size="10.5" font-weight="700" text-anchor="middle">core/utils.py</text>
+                <text x="390" y="156" fill="#71717a" font-family="JetBrains Mono, monospace" font-size="9.5" text-anchor="middle">deg=42 · 19.2k tok</text>
+              </g>
+
+              <g data-graph-layer="steiner-nodes" opacity="1" class="transition-opacity duration-300">
+                <rect x="175" y="86" width="142" height="32" rx="3" fill="#0b1514" stroke="#14b8a6" stroke-width="1.5"/>
+                <text x="246" y="106" fill="#2dd4bf" font-family="JetBrains Mono, monospace" font-size="10" font-weight="600" text-anchor="middle">order_schema.py</text>
+
+                <rect x="456" y="86" width="158" height="32" rx="3" fill="#0b1514" stroke="#2dd4bf" stroke-width="1.5"/>
+                <text x="535" y="100" fill="#fafafa" font-family="JetBrains Mono, monospace" font-size="9.5" font-weight="700" text-anchor="middle">INVARIANT: symlink_ssot</text>
+                <text x="535" y="112" fill="#2dd4bf" font-family="JetBrains Mono, monospace" font-size="8.5" text-anchor="middle">enrich_graph.py anchor</text>
+
+                <circle cx="245" cy="190" r="4" fill="#14b8a6"/>
+              </g>
+
+              <g>
+                <rect x="34" y="64" width="132" height="36" rx="3" fill="#161b22" stroke="#fafafa" stroke-width="1.6"/>
+                <text x="100" y="80" fill="#fafafa" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" text-anchor="middle">SEED A: cart.py</text>
+                <text x="100" y="93" fill="#8b949e" font-family="JetBrains Mono, monospace" font-size="8.5" text-anchor="middle">checkout module</text>
+
+                <rect x="34" y="194" width="132" height="36" rx="3" fill="#161b22" stroke="#fafafa" stroke-width="1.6"/>
+                <text x="100" y="210" fill="#fafafa" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" text-anchor="middle">SEED B: orders.py</text>
+                <text x="100" y="223" fill="#8b949e" font-family="JetBrains Mono, monospace" font-size="8.5" text-anchor="middle">REST endpoint</text>
+
+                <rect x="612" y="127" width="136" height="36" rx="3" fill="#161b22" stroke="#fafafa" stroke-width="1.6"/>
+                <text x="680" y="143" fill="#fafafa" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" text-anchor="middle">SEED C: summary.js</text>
+                <text x="680" y="156" fill="#8b949e" font-family="JetBrains Mono, monospace" font-size="8.5" text-anchor="middle">storefront UI</text>
+              </g>
+            </svg>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ===============================================================
+           MICROSITE SECTION 6: REPOSITORY SOURCE-FILE DRAWER
+           =============================================================== -->
+      <section id="source-drawer" class="scroll-mt-20 space-y-5">
+        <div class="flex flex-wrap items-end justify-between gap-3 border-b border-[#27272a] pb-3">
+          <div>
+            <div class="font-mono text-[11px] uppercase tracking-[0.14em] text-tealAccent-bright">INSPECTABLE REFERENCE IMPLEMENTATION</div>
+            <h2 class="font-sans text-2xl sm:text-3xl font-extrabold tracking-tight text-[#fafafa] mt-1">
+              Repository Source-File Drawer
+            </h2>
+          </div>
+          <button
+            type="button"
+            id="drawer-toggle-btn"
+            onclick="toggleSourceDrawer()"
+            aria-expanded="true"
+            class="inline-flex items-center gap-2 font-mono text-xs text-[#e4e4e7] hover:text-tealAccent-bright border border-[#27272a] px-3 py-1.5 bg-[#111114] transition-colors"
+          >
+            <span id="drawer-toggle-label">Collapse Drawer</span>
+            <svg id="drawer-toggle-icon" class="w-3.5 h-3.5 transition-transform" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
+              <path d="M4 6l4 4 4-4"/>
+            </svg>
+          </button>
+        </div>
+
+        <div id="source-drawer-body" class="border border-[#27272a] bg-[#0b0b0e] overflow-hidden">
+          <!-- File Tabs -->
+          <div class="px-4 py-2.5 border-b border-[#27272a] bg-[#111114] flex flex-wrap items-center justify-between gap-3">
+            <div id="viewer-tabs" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar font-mono text-xs"></div>
+            <div class="flex items-center gap-3 font-mono text-[11px] text-[#71717a] shrink-0">
+              <span id="viewer-filepath" class="text-[#e4e4e7] font-semibold"></span>
+              <span id="viewer-meta" class="tabular-nums"></span>
+              <button
+                type="button"
+                onclick="copyActiveRepoFile()"
+                class="inline-flex items-center gap-1.5 px-2.5 py-1 border border-tealAccent/50 bg-tealAccent/10 hover:bg-tealAccent hover:text-obsidian text-tealAccent-bright font-semibold transition-colors"
+              >
+                <svg class="w-3 h-3" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <rect x="5.5" y="5.5" width="8" height="8" rx="1"/>
+                  <path d="M3.5 10.5h-1a1 1 0 01-1-1v-7a1 1 0 011-1h7a1 1 0 011 1v1"/>
+                </svg>
+                <span>Copy Raw</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Line-Numbered Code Viewer -->
+          <div class="overflow-x-auto max-h-[460px] bg-obsidian">
+            <table class="w-full border-collapse font-mono text-xs leading-relaxed">
+              <tbody id="viewer-code-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Editorial Microsite Footer -->
+    <footer class="border-t border-[#27272a] bg-[#0b0b0e] mt-auto">
+      <div class="max-w-[1220px] mx-auto px-4 sm:px-6 py-6 flex flex-wrap items-center justify-between gap-4 font-mono text-xs text-[#a1a1aa]">
+        <div class="flex items-center gap-3 flex-wrap">
+          <span class="text-[#fafafa] font-semibold">chiminaca/steiner-handoff</span>
+          <span class="text-[#3f3f46]">|</span>
+          <button type="button" onclick="openRepoFile('LICENSE')" class="hover:text-tealAccent-bright transition-colors">MIT License</button>
+          <span class="text-[#3f3f46]">|</span>
+          <a href="https://github.com/chiminaca/steiner-handoff" target="_blank" rel="noopener noreferrer" class="hover:text-tealAccent-bright transition-colors">GitHub Repository</a>
+        </div>
+        <div class="inline-flex items-center gap-2 px-2.5 py-1 border border-tealAccent/35 bg-tealAccent/10 text-tealAccent-bright text-[11px]">
+          <svg class="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.75">
+            <path d="M3 8.5l3.2 3.2L13 4.8"/>
+          </svg>
+          <span>OPSEC CLEAN-ROOM VERIFIED</span>
+        </div>
+      </div>
+    </footer>
+  </div>
+<div
+    id="toast"
+    role="status"
+    aria-live="polite"
+    class="fixed bottom-5 right-5 z-50 pointer-events-none opacity-0 translate-y-2 transition-all duration-200 max-w-sm"
+  >
+    <div class="flex items-center gap-2.5 px-4 py-2.5 rounded border border-tealAccent/60 bg-obsidian/95 shadow-lg font-mono text-xs text-[#fafafa]">
+      <svg class="w-4 h-4 text-tealAccent-bright shrink-0" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.75">
+        <path d="M3 8.5l3.2 3.2L13 4.8"/>
+      </svg>
+      <span id="toast-message">Copied to clipboard</span>
+    </div>
+  </div>
+
+  <script>
+    // <REPO_FILES_START>
+    const REPO_FILES = {
+  "topology.example.yaml": {
+    "content": "# steiner-handoff :: Neutral Infrastructure & Model Role Topology (SSOT)\n# Copy this file to topology.yaml (gitignored) before running compiler/build_prompt.py.\n# Never commit local RFC-1918 IPs, hostnames, credentials, or private repository slugs.\n\nversion: \"1.0\"\nworkspace_root: \"/srv/workspaces\"\n\nhub:\n  host: \"127.0.0.1\"\n  port: 8088\n  max_pack_tokens: 3500\n  hub_penalty_alpha: 1.4\n  pagerank_damping: 0.85\n  # Optional remote hub / secondary node example (RFC-5737 documentation IP):\n  # secondary_node:\n  #   host: \"192.0.2.10\"\n  #   port: 8088\n\nlocal_inference:\n  enabled: true\n  provider: \"ollama\"\n  endpoint: \"http://127.0.0.1:11434\"\n  # Optional remote GPU inference node example (RFC-5737 documentation IP):\n  # endpoint: \"http://192.0.2.10:11434\"\n  model: \"qwen2.5-coder:14b\"\n  anti_swarm_max_files: 2\n  anti_swarm_max_loc: 40\n\nprivacy_firewall:\n  enforce_physical_isolation: true\n  forbid_global_mesh_merge: true\n  tier1_private_patterns:\n    - \"**/finance-ledger/**\"\n    - \"**/legal-contracts/**\"\n    - \"**/.secrets/**\"\n\nagent_roles:\n  coordinator: \"frontier-architect\"\n  worker_slice: \"fast-coder\"\n  auditor: \"reasoning-auditor\"\n  headless_qa: \"local-runner\"\n\nverification:\n  mode: \"single_pass_headless\"\n  require_syntax_check: true\n  require_graph_refresh: true\n  refresh_endpoint_template: \"/api/refresh/{project_id}\"\n  opsec_scan_script: \"scripts/opsec_check.py\"\n"
+  },
+  "compiler/build_prompt.py": {
+    "content": "#!/usr/bin/env python3\n\"\"\"Compile topology.yaml (and an optional agent preset) into Webchat Auditor prompts.\"\"\"\n\nfrom __future__ import annotations\n\nimport argparse\nimport re\nimport sys\nfrom pathlib import Path\nfrom typing import Any, Dict\n\ntry:\n    import yaml\nexcept ImportError as exc:  # pragma: no cover - runtime environment check\n    raise SystemExit(\n        \"PyYAML is required to run compiler/build_prompt.py. \"\n        \"Install it with: pip install pyyaml\"\n    ) from exc\n\nROOT = Path(__file__).resolve().parent.parent\nTEMPLATES_DIR = Path(__file__).resolve().parent / \"templates\"\nMASTER_TEMPLATE = TEMPLATES_DIR / \"master_compiler.tmpl.md\"\nCOMPACT_TEMPLATE = TEMPLATES_DIR / \"compact_booster.tmpl.md\"\nPLACEHOLDER_RE = re.compile(r\"\\{\\{[A-Z0-9_]+\\}\\}\")\n\n\ndef resolve_input_path(raw_path: str) -> Path:\n    \"\"\"Resolve an input path relative to CWD first, falling back to repository root.\"\"\"\n    candidate = Path(raw_path)\n    if candidate.is_absolute() or candidate.exists():\n        return candidate\n    fallback = ROOT / raw_path\n    if fallback.exists():\n        return fallback\n    return candidate\n\n\ndef load_yaml_file(path: Path, label: str, hint: str | None = None) -> Dict[str, Any]:\n    \"\"\"Load and validate a YAML mapping file.\"\"\"\n    if not path.exists():\n        message = f\"Missing {label}: '{path}'.\"\n        if hint:\n            message = f\"{message} {hint}\"\n        raise FileNotFoundError(message)\n    with path.open(\"r\", encoding=\"utf-8\") as fh:\n        data = yaml.safe_load(fh)\n    if not isinstance(data, dict):\n        raise ValueError(f\"Expected YAML mapping in {label}: '{path}'.\")\n    return data\n\n\ndef deep_merge(base: Dict[str, Any], override: Dict[str, Any]) -> Dict[str, Any]:\n    \"\"\"Recursively merge override mapping onto a copy of base mapping.\"\"\"\n    merged: Dict[str, Any] = dict(base)\n    for key, value in override.items():\n        if isinstance(value, dict) and isinstance(merged.get(key), dict):\n            merged[key] = deep_merge(merged[key], value)\n        else:\n            merged[key] = value\n    return merged\n\n\ndef build_context(topology: Dict[str, Any], preset: Dict[str, Any] | None) -> Dict[str, str]:\n    \"\"\"Build flat placeholder mapping for template interpolation.\"\"\"\n    merged = deep_merge(topology, preset) if preset else dict(topology)\n\n    hub = merged.get(\"hub\", {})\n    local_inf = merged.get(\"local_inference\", {})\n    privacy = merged.get(\"privacy_firewall\", {})\n    roles = merged.get(\"agent_roles\", {})\n    verification = merged.get(\"verification\", {})\n    invocation = merged.get(\"invocation\", {})\n\n    host = str(hub.get(\"host\", \"127.0.0.1\"))\n    port = int(hub.get(\"port\", 8088))\n    hub_url = f\"http://{host}:{port}\"\n\n    patterns_list = privacy.get(\"tier1_private_patterns\", [])\n    if isinstance(patterns_list, list):\n        patterns_str = \", \".join(str(p) for p in patterns_list) or \"none\"\n    else:\n        patterns_str = str(patterns_list)\n\n    preset_name = str(merged.get(\"preset_name\", \"default-topology\"))\n    cli_invoke = str(\n        invocation.get(\"slice_command\")\n        or roles.get(\"cli_command\")\n        or \"local-agent-cli --slice\"\n    )\n\n    return {\n        \"PRESET_NAME\": preset_name,\n        \"WORKSPACE_ROOT\": str(merged.get(\"workspace_root\", \"/srv/workspaces\")),\n        \"HUB_HOST\": host,\n        \"HUB_PORT\": str(port),\n        \"HUB_URL\": hub_url,\n        \"MAX_PACK_TOKENS\": str(hub.get(\"max_pack_tokens\", 3500)),\n        \"HUB_PENALTY_ALPHA\": str(hub.get(\"hub_penalty_alpha\", 1.4)),\n        \"PAGERANK_DAMPING\": str(hub.get(\"pagerank_damping\", 0.85)),\n        \"LOCAL_INFERENCE_PROVIDER\": str(local_inf.get(\"provider\", \"ollama\")),\n        \"LOCAL_INFERENCE_ENDPOINT\": str(\n            local_inf.get(\"endpoint\", \"http://127.0.0.1:11434\")\n        ),\n        \"LOCAL_INFERENCE_MODEL\": str(local_inf.get(\"model\", \"qwen2.5-coder:14b\")),\n        \"ANTI_SWARM_MAX_FILES\": str(local_inf.get(\"anti_swarm_max_files\", 2)),\n        \"ANTI_SWARM_MAX_LOC\": str(local_inf.get(\"anti_swarm_max_loc\", 40)),\n        \"PRIVACY_ISOLATION\": str(\n            bool(privacy.get(\"enforce_physical_isolation\", True))\n        ).lower(),\n        \"TIER1_PATTERNS\": patterns_str,\n        \"COORDINATOR_ROLE\": str(roles.get(\"coordinator\", \"frontier-architect\")),\n        \"WORKER_ROLE\": str(roles.get(\"worker_slice\", \"fast-coder\")),\n        \"AUDITOR_ROLE\": str(roles.get(\"auditor\", \"reasoning-auditor\")),\n        \"QA_ROLE\": str(roles.get(\"headless_qa\", \"local-runner\")),\n        \"CLI_INVOKE\": cli_invoke,\n        \"VERIFICATION_MODE\": str(verification.get(\"mode\", \"single_pass_headless\")),\n        \"REFRESH_ENDPOINT_TEMPLATE\": str(\n            verification.get(\"refresh_endpoint_template\", \"/api/refresh/{project_id}\")\n        ),\n        \"OPSEC_SCAN_SCRIPT\": str(\n            verification.get(\"opsec_scan_script\", \"scripts/opsec_check.py\")\n        ),\n    }\n\n\ndef render_template(template_path: Path, context: Dict[str, str]) -> str:\n    \"\"\"Interpolate {{KEY}} placeholders in a template and verify none remain.\"\"\"\n    raw = template_path.read_text(encoding=\"utf-8\")\n    rendered = raw\n    for key, value in context.items():\n        rendered = rendered.replace(f\"{{{{{key}}}}}\", value)\n\n    unresolved = sorted(set(PLACEHOLDER_RE.findall(rendered)))\n    if unresolved:\n        raise ValueError(\n            f\"Unresolved template placeholders in '{template_path.name}': {', '.join(unresolved)}\"\n        )\n    return rendered\n\n\ndef parse_args(argv: list[str] | None = None) -> argparse.Namespace:\n    parser = argparse.ArgumentParser(\n        description=\"Compile steiner-handoff topology and preset YAML into Webchat Auditor prompts.\"\n    )\n    parser.add_argument(\n        \"--topology\",\n        default=\"topology.yaml\",\n        help=\"Path to declarative topology YAML (default: topology.yaml).\",\n    )\n    parser.add_argument(\n        \"--preset\",\n        default=None,\n        help=\"Optional path to an agent role/invocation preset YAML.\",\n    )\n    parser.add_argument(\n        \"--out-dir\",\n        default=\"dist\",\n        help=\"Output directory for compiled Markdown prompts (default: dist).\",\n    )\n    return parser.parse_args(argv)\n\n\ndef main(argv: list[str] | None = None) -> int:\n    args = parse_args(argv)\n\n    topology_path = resolve_input_path(args.topology)\n    try:\n        topology = load_yaml_file(\n            topology_path,\n            label=\"topology file\",\n            hint=\"Copy topology.example.yaml to topology.yaml first, or pass --topology <path>.\",\n        )\n        preset: Dict[str, Any] | None = None\n        if args.preset:\n            preset_path = resolve_input_path(args.preset)\n            preset = load_yaml_file(preset_path, label=\"preset file\")\n    except (FileNotFoundError, ValueError, yaml.YAMLError) as exc:\n        print(f\"[build_prompt] ERROR: {exc}\", file=sys.stderr)\n        return 1\n\n    context = build_context(topology, preset)\n    out_dir = Path(args.out_dir)\n    out_dir.mkdir(parents=True, exist_ok=True)\n\n    master_out = out_dir / \"WEBCHAT_SYSTEM_PROMPT.md\"\n    compact_out = out_dir / \"WEBCHAT_COMPACT_BOOSTER.md\"\n\n    master_out.write_text(render_template(MASTER_TEMPLATE, context), encoding=\"utf-8\")\n    compact_out.write_text(render_template(COMPACT_TEMPLATE, context), encoding=\"utf-8\")\n\n    print(f\"[build_prompt] Compiled {master_out} and {compact_out} (preset={context['PRESET_NAME']})\")\n    return 0\n\n\nif __name__ == \"__main__\":\n    raise SystemExit(main())\n"
+  },
+  "hub/app/steiner_packer.py": {
+    "content": "\"\"\"Hub-Penalized Kou Terminal-Steiner-Tree solver, NumPy PPR packer, and L0-L3 ELK builder.\"\"\"\n\nfrom __future__ import annotations\n\nimport heapq\nimport html\nimport json\nimport math\nimport re\nimport threading\nfrom collections import defaultdict, deque\nfrom datetime import datetime, timezone\nfrom pathlib import Path\nfrom typing import Any, Iterable\n\ntry:\n    import numpy as np\nexcept ImportError:  # pragma: no cover\n    np = None  # type: ignore[assignment]\n\n\nRELATION_BASE_WEIGHT: dict[str, float] = {\n    \"governs\": 0.25,\n    \"routes_to\": 0.28,\n    \"calls_cross_repo\": 0.35,\n    \"validates\": 0.55,\n    \"calls\": 0.60,\n    \"inherits\": 0.70,\n    \"implements\": 0.70,\n    \"defines\": 0.85,\n    \"references\": 0.90,\n    \"uses\": 0.95,\n    \"contains\": 1.35,\n    \"imports_from\": 1.80,\n    \"imports\": 2.10,\n}\nDEFAULT_EDGE_WEIGHT: float = 1.0\n\n\nclass SeedResolutionError(ValueError):\n    \"\"\"Raised when none of the requested seeds match any node in the graph.\"\"\"\n\n\ndef _is_invariant(node_attr: dict[str, Any]) -> bool:\n    return (\n        str(node_attr.get(\"kind\", \"\")).lower() == \"domain_invariant\"\n        or str(node_attr.get(\"type\", \"\")).lower() == \"domain_invariant\"\n    )\n\n\ndef _estimate_tokens(text: str) -> int:\n    return max(1, math.ceil(len(text) / 3.6))\n\n\nclass SteinerPacker:\n    \"\"\"Computes Hub-Penalized Kou Steiner Trees, vectorized PPR, XML packs, and ELK L0-L3 graphs.\"\"\"\n\n    def __init__(\n        self,\n        graph_data: str | Path | dict[str, Any],\n        repo_paths: dict[str, str | Path] | None = None,\n        alpha: float = 1.4,\n        pagerank_damping: float = 0.85,\n    ) -> None:\n        self.alpha = float(alpha)\n        self.pagerank_damping = float(pagerank_damping)\n        self.repo_paths: dict[str, Path] = {\n            k: Path(v).expanduser().resolve() for k, v in (repo_paths or {}).items()\n        }\n        self._lock = threading.RLock()\n        self._source_path: Path | None = None\n\n        self.nodes: dict[str, dict[str, Any]] = {}\n        self.out_edges: dict[str, list[dict[str, Any]]] = defaultdict(list)\n        self.u_adj: dict[str, list[tuple[str, float, str]]] = defaultdict(list)\n        self.raw_degree: dict[str, int] = defaultdict(int)\n        self.node_list: list[str] = []\n        self.node_to_idx: dict[str, int] = {}\n        self.comp_id: dict[str, int] = {}\n        self.components: list[set[str]] = []\n\n        self._ppr_src: Any = None\n        self._ppr_dst: Any = None\n        self._ppr_prob: Any = None\n        self._ppr_dang: Any = None\n        self._ppr_in_links: list[list[tuple[int, float]]] = []\n        self._ppr_dangling: list[int] = []\n\n        if isinstance(graph_data, (str, Path)):\n            self._source_path = Path(graph_data).expanduser()\n            raw = self._load_json(self._source_path)\n        else:\n            raw = graph_data\n        self._build_index(raw)\n\n    @staticmethod\n    def _load_json(path: Path) -> dict[str, Any]:\n        if not path.is_file():\n            return {\"nodes\": [], \"links\": []}\n        try:\n            data = json.loads(path.read_text(encoding=\"utf-8\"))\n            return data if isinstance(data, dict) else {\"nodes\": [], \"links\": []}\n        except Exception:\n            return {\"nodes\": [], \"links\": []}\n\n    def _penalized_weight(self, u: str, v: str, base_w: float, alpha: float) -> float:\n        \"\"\"w'(u, v) = w(u, v) * (1 + alpha * ln(1 + deg(v))), zero hub penalty on domain_invariant.\"\"\"\n        if _is_invariant(self.nodes[v]):\n            return base_w\n        deg_v = self.raw_degree.get(v, 0)\n        return base_w * (1.0 + alpha * math.log1p(deg_v))\n\n    def _symmetric_penalized_weight(self, u: str, v: str, base_w: float, alpha: float) -> float:\n        u_inv = _is_invariant(self.nodes[u])\n        v_inv = _is_invariant(self.nodes[v])\n        if u_inv and v_inv:\n            return base_w\n        deg_u = 0 if u_inv else self.raw_degree.get(u, 0)\n        deg_v = 0 if v_inv else self.raw_degree.get(v, 0)\n        return base_w * (1.0 + alpha * math.log1p(max(deg_u, deg_v)))\n\n    def _build_index(self, raw: dict[str, Any]) -> None:\n        raw_nodes = raw.get(\"nodes\", [])\n        raw_links = raw.get(\"links\", raw.get(\"edges\", []))\n\n        nodes: dict[str, dict[str, Any]] = {}\n        for item in raw_nodes:\n            if not isinstance(item, dict):\n                continue\n            nid = str(item.get(\"id\", \"\")).strip()\n            if not nid:\n                continue\n            attr = dict(item)\n            attr.setdefault(\"label\", nid)\n            attr.setdefault(\"repo\", str(attr.get(\"project_id\") or (nid.split(\"::\")[0] if \"::\" in nid else \"default\")))\n            attr.setdefault(\"project_id\", attr[\"repo\"])\n            attr.setdefault(\"kind\", attr.get(\"type\", \"code\"))\n            attr[\"_invariant\"] = _is_invariant(attr)\n            attr[\"_callable\"] = bool(attr.get(\"_callable\", attr.get(\"callable\", False)))\n            nodes[nid] = attr\n\n        raw_deg: dict[str, int] = defaultdict(int)\n        valid_links: list[tuple[str, str, str, float]] = []\n        for link in raw_links:\n            if not isinstance(link, dict):\n                continue\n            u = str(link.get(\"source\", \"\")).strip()\n            v = str(link.get(\"target\", \"\")).strip()\n            if not u or not v or u == v or u not in nodes or v not in nodes:\n                continue\n            rel = str(link.get(\"relation\", link.get(\"label\", \"references\"))).lower()\n            raw_w = float(link.get(\"weight\", 1.0) or 1.0)\n            c_rel = RELATION_BASE_WEIGHT.get(rel, DEFAULT_EDGE_WEIGHT)\n            base_w = c_rel / max(raw_w, 0.1)\n            valid_links.append((u, v, rel, base_w))\n            raw_deg[u] += 1\n            raw_deg[v] += 1\n\n        with self._lock:\n            self.nodes = nodes\n            self.raw_degree = raw_deg\n            self.out_edges = defaultdict(list)\n            self.u_adj = defaultdict(list)\n\n            undir_best: dict[tuple[str, str], tuple[float, str, float]] = {}\n            for u, v, rel, base_w in valid_links:\n                dir_w = self._penalized_weight(u, v, base_w, self.alpha)\n                sym_w = self._symmetric_penalized_weight(u, v, base_w, self.alpha)\n                aff = 1.0 / max(dir_w, 1e-4)\n                self.out_edges[u].append({\n                    \"source\": u,\n                    \"target\": v,\n                    \"relation\": rel,\n                    \"weight\": dir_w,\n                    \"base_weight\": base_w,\n                    \"affinity\": aff,\n                })\n                pair = (u, v) if u < v else (v, u)\n                if pair not in undir_best or sym_w < undir_best[pair][0]:\n                    undir_best[pair] = (sym_w, rel, base_w)\n\n            self._undir_base: dict[tuple[str, str], float] = {}\n            for (u, v), (sym_w, rel, base_w) in undir_best.items():\n                self.u_adj[u].append((v, sym_w, rel))\n                self.u_adj[v].append((u, sym_w, rel))\n                self._undir_base[(u, v)] = base_w\n\n            self.node_list = sorted(nodes.keys())\n            self.node_to_idx = {nid: idx for idx, nid in enumerate(self.node_list)}\n\n            visited: set[str] = set()\n            self.components = []\n            self.comp_id = {}\n            for nid in self.node_list:\n                if nid in visited:\n                    continue\n                comp: set[str] = set()\n                dq = deque([nid])\n                visited.add(nid)\n                while dq:\n                    cur = dq.popleft()\n                    comp.add(cur)\n                    self.comp_id[cur] = len(self.components)\n                    for nb, _, _ in self.u_adj.get(cur, ()):\n                        if nb not in visited:\n                            visited.add(nb)\n                            dq.append(nb)\n                self.components.append(comp)\n\n            self._build_ppr_index()\n\n    def _build_ppr_index(self) -> None:\n        n = len(self.node_list)\n        in_links: list[list[tuple[int, float]]] = [[] for _ in range(n)]\n        dangling: list[int] = []\n        srcs: list[int] = []\n        dsts: list[int] = []\n        probs: list[float] = []\n\n        for u_idx, u in enumerate(self.node_list):\n            neighbors: list[tuple[int, float]] = []\n            for edge in self.out_edges.get(u, ()):\n                v_idx = self.node_to_idx.get(edge[\"target\"])\n                if v_idx is not None:\n                    neighbors.append((v_idx, float(edge[\"affinity\"])))\n            for nb, sym_w, _ in self.u_adj.get(u, ()):\n                v_idx = self.node_to_idx.get(nb)\n                if v_idx is not None:\n                    neighbors.append((v_idx, 0.5 / max(sym_w, 1e-4)))\n\n            if not neighbors:\n                dangling.append(u_idx)\n                continue\n\n            merged: dict[int, float] = defaultdict(float)\n            for v_idx, w in neighbors:\n                merged[v_idx] += w\n            total_w = sum(merged.values())\n            if total_w <= 0.0:\n                dangling.append(u_idx)\n                continue\n            inv_w = 1.0 / total_w\n            for v_idx, w in merged.items():\n                p = w * inv_w\n                in_links[v_idx].append((u_idx, p))\n                srcs.append(u_idx)\n                dsts.append(v_idx)\n                probs.append(p)\n\n        self._ppr_in_links = in_links\n        self._ppr_dangling = dangling\n        if np is not None and n > 0:\n            self._ppr_src = np.array(srcs, dtype=np.int32)\n            self._ppr_dst = np.array(dsts, dtype=np.int32)\n            self._ppr_prob = np.array(probs, dtype=np.float64)\n            self._ppr_dang = np.array(dangling, dtype=np.int32)\n        else:\n            self._ppr_src = None\n            self._ppr_dst = None\n            self._ppr_prob = None\n            self._ppr_dang = None\n\n    def compute_ppr(\n        self,\n        seed_set: set[str],\n        backbone_set: set[str] | None = None,\n        damping: float | None = None,\n        max_iter: int = 60,\n        tol: float = 1e-6,\n    ) -> dict[str, float]:\n        \"\"\"Vectorized NumPy sparse power-iteration Personalized PageRank.\"\"\"\n        n = len(self.node_list)\n        if n == 0:\n            return {}\n        alpha_d = float(damping if damping is not None else self.pagerank_damping)\n        one_minus_d = 1.0 - alpha_d\n        bb = backbone_set or set()\n\n        if np is not None and self._ppr_src is not None:\n            p_vec = np.zeros(n, dtype=np.float64)\n            for nid in seed_set | bb:\n                idx = self.node_to_idx.get(nid)\n                if idx is not None:\n                    p_vec[idx] = 3.0 if nid in seed_set else 1.5\n            p_sum = float(p_vec.sum())\n            p_vec = (p_vec / p_sum) if p_sum > 0.0 else np.full(n, 1.0 / n, dtype=np.float64)\n\n            x = p_vec.copy()\n            src_arr = self._ppr_src\n            dst_arr = self._ppr_dst\n            prob_arr = self._ppr_prob\n            dang_arr = self._ppr_dang\n\n            for _ in range(max_iter):\n                dangle_mass = alpha_d * float(x[dang_arr].sum()) if dang_arr.size else 0.0\n                trans = (\n                    np.bincount(dst_arr, weights=x[src_arr] * prob_arr, minlength=n)\n                    if src_arr.size\n                    else np.zeros(n, dtype=np.float64)\n                )\n                x_next = (one_minus_d + dangle_mass) * p_vec + alpha_d * trans\n                if float(np.abs(x_next - x).sum()) < tol:\n                    x = x_next\n                    break\n                x = x_next\n            return {self.node_list[i]: float(x[i]) for i in np.flatnonzero(x > 0.0)}\n\n        p_raw = [\n            3.0 if nid in seed_set else (1.5 if nid in bb else 0.0)\n            for nid in self.node_list\n        ]\n        p_sum = sum(p_raw)\n        p_norm = [v / p_sum for v in p_raw] if p_sum > 0.0 else [1.0 / n] * n\n        x_py = list(p_norm)\n        for _ in range(max_iter):\n            dangle_mass = alpha_d * sum(x_py[i] for i in self._ppr_dangling) if self._ppr_dangling else 0.0\n            t_scale = one_minus_d + dangle_mass\n            x_next_py = [0.0] * n\n            err = 0.0\n            for j in range(n):\n                acc = sum(x_py[src_i] * prob for src_i, prob in self._ppr_in_links[j])\n                val = t_scale * p_norm[j] + alpha_d * acc\n                x_next_py[j] = val\n                err += abs(val - x_py[j])\n            x_py = x_next_py\n            if err < tol:\n                break\n        return {self.node_list[i]: x_py[i] for i in range(n) if x_py[i] > 0.0}\n\n    def _edge_weight_for_alpha(self, u: str, v: str, alpha: float) -> float:\n        pair = (u, v) if u < v else (v, u)\n        base_w = self._undir_base.get(pair, DEFAULT_EDGE_WEIGHT)\n        return self._symmetric_penalized_weight(u, v, base_w, alpha)\n\n    def compute_terminal_steiner_tree(\n        self,\n        terminals: list[str],\n        alpha: float | None = None,\n    ) -> tuple[set[str], set[tuple[str, str]]]:\n        \"\"\"\n        Hub-Penalized Kou Terminal-Steiner-Tree:\n        1. Full pairwise shortest-path distance matrix over resolved terminal seeds via Dijkstra\n        2. Kruskal MST over the metric closure\n        3. Induced subgraph reconstruction\n        4. Second MST over the induced subgraph\n        5. Iterative non-terminal leaf pruning\n        \"\"\"\n        eff_alpha = self.alpha if alpha is None else float(alpha)\n        unique_terms = [t for t in dict.fromkeys(terminals) if t in self.nodes]\n        if not unique_terms:\n            return set(), set()\n        if len(unique_terms) == 1:\n            return {unique_terms[0]}, set()\n\n        # 1. Full pairwise shortest-path distance matrix via Dijkstra\n        dist_matrix: dict[tuple[str, str], float] = {}\n        pair_paths: dict[tuple[str, str], list[str]] = {}\n        closure_edges: list[tuple[float, str, str]] = []\n\n        for idx, src in enumerate(unique_terms):\n            dist: dict[str, float] = {src: 0.0}\n            parent: dict[str, str] = {}\n            pq: list[tuple[float, str]] = [(0.0, src)]\n            settled: set[str] = set()\n            targets = set(unique_terms) - {src}\n\n            while pq and targets:\n                d_u, u = heapq.heappop(pq)\n                if u in settled:\n                    continue\n                settled.add(u)\n                if u in targets:\n                    targets.remove(u)\n                    if not targets:\n                        break\n                for v, stored_w, _rel in self.u_adj.get(u, ()):\n                    if v in settled:\n                        continue\n                    w_uv = stored_w if abs(eff_alpha - self.alpha) < 1e-9 else self._edge_weight_for_alpha(u, v, eff_alpha)\n                    nd = d_u + w_uv\n                    if nd < dist.get(v, math.inf):\n                        dist[v] = nd\n                        parent[v] = u\n                        heapq.heappush(pq, (nd, v))\n\n            for dst in unique_terms[idx + 1 :]:\n                if dst in dist:\n                    d_sd = dist[dst]\n                    dist_matrix[(src, dst)] = d_sd\n                    dist_matrix[(dst, src)] = d_sd\n                    path = [dst]\n                    cur = dst\n                    while cur != src:\n                        cur = parent[cur]\n                        path.append(cur)\n                    path.reverse()\n                    pair_paths[(src, dst)] = path\n                    closure_edges.append((d_sd, src, dst))\n\n        if not closure_edges:\n            return set(unique_terms), set()\n\n        # 2. Kruskal MST over metric closure\n        closure_edges.sort(key=lambda item: (item[0], item[1], item[2]))\n        uf = {t: t for t in unique_terms}\n\n        def _find(x: str) -> str:\n            while uf[x] != x:\n                uf[x] = uf[uf[x]]\n                x = uf[x]\n            return x\n\n        induced_nodes: set[str] = set(unique_terms)\n        for _cost, u_t, v_t in closure_edges:\n            ru, rv = _find(u_t), _find(v_t)\n            if ru != rv:\n                uf[ru] = rv\n                induced_nodes.update(pair_paths[(u_t, v_t)])\n\n        # 3. Induced subgraph reconstruction\n        induced_edges: list[tuple[float, str, str]] = []\n        seen_pairs: set[tuple[str, str]] = set()\n        for u in induced_nodes:\n            for v, stored_w, _rel in self.u_adj.get(u, ()):\n                if v in induced_nodes and u < v:\n                    pair = (u, v)\n                    if pair not in seen_pairs:\n                        seen_pairs.add(pair)\n                        w_uv = (\n                            stored_w\n                            if abs(eff_alpha - self.alpha) < 1e-9\n                            else self._edge_weight_for_alpha(u, v, eff_alpha)\n                        )\n                        induced_edges.append((w_uv, u, v))\n\n        # 4. Second MST over induced subgraph\n        induced_edges.sort(key=lambda item: (item[0], item[1], item[2]))\n        uf_sub = {n: n for n in induced_nodes}\n\n        def _find_sub(x: str) -> str:\n            while uf_sub[x] != x:\n                uf_sub[x] = uf_sub[uf_sub[x]]\n                x = uf_sub[x]\n            return x\n\n        tree_adj: dict[str, set[str]] = defaultdict(set)\n        for _w, u, v in induced_edges:\n            ru, rv = _find_sub(u), _find_sub(v)\n            if ru != rv:\n                uf_sub[ru] = rv\n                tree_adj[u].add(v)\n                tree_adj[v].add(u)\n\n        # 5. Iterative non-terminal leaf pruning\n        term_set = set(unique_terms)\n        leaf_queue = deque(n for n, nbs in tree_adj.items() if len(nbs) == 1 and n not in term_set)\n        while leaf_queue:\n            leaf = leaf_queue.popleft()\n            if leaf in term_set or len(tree_adj.get(leaf, ())) != 1:\n                continue\n            nb = next(iter(tree_adj[leaf]))\n            tree_adj[nb].discard(leaf)\n            del tree_adj[leaf]\n            if nb not in term_set and len(tree_adj.get(nb, ())) == 1:\n                leaf_queue.append(nb)\n\n        final_nodes = set(term_set) | set(tree_adj.keys())\n        final_edges: set[tuple[str, str]] = set()\n        for u, nbs in tree_adj.items():\n            for v in nbs:\n                if u < v:\n                    final_edges.add((u, v))\n        return final_nodes, final_edges\n\n    def resolve_seeds(self, seeds: list[str], max_per_seed: int = 2) -> list[str]:\n        resolved: list[str] = []\n        seen: set[str] = set()\n\n        def _add(nid: str) -> None:\n            if nid not in seen and nid in self.nodes:\n                seen.add(nid)\n                resolved.append(nid)\n\n        for raw_seed in seeds:\n            q = str(raw_seed).strip()\n            if not q:\n                continue\n            if q in self.nodes:\n                _add(q)\n                continue\n\n            ql = q.lower()\n            tokens = [t for t in re.split(r\"[\\s:/._-]+\", ql) if t]\n            scored: list[tuple[float, str]] = []\n            for nid, attr in self.nodes.items():\n                label = str(attr.get(\"label\", \"\")).lower()\n                sf = str(attr.get(\"source_file\", \"\")).lower()\n                repo = str(attr.get(\"repo\", \"\")).lower()\n                nl = nid.lower()\n\n                score = 0.0\n                if nl == ql or label == ql or label.rstrip(\"()\") == ql:\n                    score = 100.0\n                elif ql in label:\n                    score = 72.0\n                elif ql in sf:\n                    score = 62.0\n                elif ql == repo:\n                    score = 52.0 if attr.get(\"kind\") == \"file\" else 42.0\n                elif ql in nl:\n                    score = 45.0\n                elif tokens:\n                    hay = f\"{nl} {label} {sf} {repo}\"\n                    hits = sum(1 for tok in tokens if tok in hay)\n                    if hits == len(tokens):\n                        score = 38.0\n                    elif hits > 0:\n                        score = 12.0 * (hits / len(tokens))\n\n                if score > 0.0:\n                    if attr.get(\"_invariant\"):\n                        score += 6.0\n                    if attr.get(\"_callable\"):\n                        score += 2.0\n                    score += min(self.raw_degree.get(nid, 0) * 0.1, 3.0)\n                    scored.append((score, nid))\n\n            scored.sort(key=lambda item: (-item[0], item[1]))\n            for _sc, nid in scored[:max_per_seed]:\n                _add(nid)\n\n        if not resolved:\n            raise SeedResolutionError(\n                f\"No graph nodes matched seeds {seeds} (total nodes: {len(self.nodes)}).\"\n            )\n        return resolved\n\n    def _read_snippet(self, nid: str, max_lines: int = 24) -> str:\n        attr = self.nodes[nid]\n        if _is_invariant(attr):\n            return str(attr.get(\"summary\", \"\")).strip()\n\n        repo = str(attr.get(\"repo\", \"\"))\n        rel_file = str(attr.get(\"source_file\", \"\")).lstrip(\"/\\\\\")\n        repo_root = self.repo_paths.get(repo)\n        if not repo_root or not rel_file:\n            return \"\"\n        try:\n            target = (repo_root / rel_file).resolve()\n            if not target.is_relative_to(repo_root) or not target.is_file():\n                return \"\"\n            lines = target.read_text(encoding=\"utf-8\", errors=\"replace\").splitlines()\n        except OSError:\n            return \"\"\n        if not lines:\n            return \"\"\n\n        start = int(attr.get(\"start_line\") or 0)\n        end = int(attr.get(\"end_line\") or 0)\n        if start <= 0:\n            loc = str(attr.get(\"source_location\", \"\"))\n            m = re.findall(r\"L?(\\d+)\", loc)\n            start = int(m[0]) if m else 1\n            end = int(m[1]) if len(m) > 1 else start + max_lines - 1\n\n        idx_start = max(0, min(start - 1, len(lines) - 1))\n        idx_end = min(len(lines), max(idx_start + 1, min(end, idx_start + max_lines)))\n        return \"\\n\".join(lines[idx_start:idx_end]).rstrip()\n\n    def _format_node_block(self, nid: str, ppr: float, is_seed: bool, snippet: str) -> str:\n        attr = self.nodes[nid]\n        sf = str(attr.get(\"source_file\", \"\"))\n        loc = str(attr.get(\"source_location\", \"\"))\n        file_ref = f\"{attr.get('repo', 'default')}/{sf}:{loc}\" if loc else f\"{attr.get('repo', 'default')}/{sf}\"\n        role = \"seed\" if is_seed else (\"invariant\" if attr.get(\"_invariant\") else \"backbone\")\n        header = (\n            f'<node id=\"{html.escape(nid)}\" label=\"{html.escape(str(attr.get(\"label\", nid)))}\" '\n            f'role=\"{role}\" file=\"{html.escape(file_ref)}\" kind=\"{html.escape(str(attr.get(\"kind\", \"code\")))}\" '\n            f'ppr=\"{ppr:.4f}\">'\n        )\n        if snippet:\n            return f\"{header}\\n{html.escape(snippet)}\\n</node>\"\n        return f\"{header}</node>\"\n\n    def extract_subgraph(\n        self,\n        seeds: list[str],\n        max_tokens: int = 3500,\n        alpha: float | None = None,\n    ) -> dict[str, Any]:\n        \"\"\"Extract a token-budgeted subgraph via Kou Steiner Tree + PPR greedy packing.\"\"\"\n        with self._lock:\n            eff_alpha = self.alpha if alpha is None else float(alpha)\n            max_tokens = max(200, min(int(max_tokens), 32000))\n            seed_ids = self.resolve_seeds(seeds)\n            seed_set = set(seed_ids)\n\n            comp_groups: dict[int, list[str]] = defaultdict(list)\n            for sid in seed_ids:\n                cid = self.comp_id.get(sid, -1)\n                comp_groups[cid].append(sid)\n\n            disjoint = len(comp_groups) > 1\n            backbone_nodes: set[str] = set(seed_ids)\n            backbone_edges: set[tuple[str, str]] = set()\n\n            for group in comp_groups.values():\n                if len(group) >= 2:\n                    st_nodes, st_edges = self.compute_terminal_steiner_tree(group, alpha=eff_alpha)\n                    backbone_nodes.update(st_nodes)\n                    backbone_edges.update(st_edges)\n                elif len(group) == 1:\n                    solo = group[0]\n                    nbs = sorted(self.u_adj.get(solo, ()), key=lambda item: item[1])[:2]\n                    for nb, _w, _rel in nbs:\n                        backbone_nodes.add(nb)\n                        backbone_edges.add((solo, nb) if solo < nb else (nb, solo))\n\n            ppr_scores = self.compute_ppr(seed_set=seed_set, backbone_set=backbone_nodes)\n\n            ordered_backbone = sorted(\n                backbone_nodes,\n                key=lambda nid: (\n                    nid not in seed_set,\n                    not self.nodes[nid].get(\"_invariant\", False),\n                    -ppr_scores.get(nid, 0.0),\n                    nid,\n                ),\n            )\n\n            candidate_neighbors: set[str] = set()\n            for bnode in backbone_nodes:\n                for nb, _w, _rel in self.u_adj.get(bnode, ()):\n                    if nb not in backbone_nodes:\n                        candidate_neighbors.add(nb)\n\n            ranked_neighbors = sorted(\n                candidate_neighbors,\n                key=lambda nid: (\n                    not self.nodes[nid].get(\"_invariant\", False),\n                    -ppr_scores.get(nid, 0.0),\n                    nid,\n                ),\n            )\n\n            used_tokens = 96\n            tier1_entries: list[dict[str, Any]] = []\n            tier2_entries: list[dict[str, Any]] = []\n            tier3_edges: list[dict[str, Any]] = []\n            included_nodes: set[str] = set()\n\n            for nid in ordered_backbone:\n                is_seed = nid in seed_set\n                ppr = ppr_scores.get(nid, 0.0)\n                snippet = self._read_snippet(nid)\n                block = self._format_node_block(nid, ppr, is_seed, snippet)\n                est = _estimate_tokens(block)\n\n                if used_tokens + est > max_tokens and snippet:\n                    remaining_chars = max(0, int((max_tokens - used_tokens - 30) * 3.5))\n                    if remaining_chars > 60:\n                        trimmed = snippet[:remaining_chars].rstrip() + \"\\n...\"\n                        block = self._format_node_block(nid, ppr, is_seed, trimmed)\n                        est = _estimate_tokens(block)\n                    else:\n                        block = self._format_node_block(nid, ppr, is_seed, \"\")\n                        est = _estimate_tokens(block)\n\n                if used_tokens + est <= max_tokens:\n                    attr = self.nodes[nid]\n                    tier1_entries.append({\n                        \"id\": nid,\n                        \"label\": attr.get(\"label\", nid),\n                        \"repo\": attr.get(\"repo\", \"\"),\n                        \"file\": f\"{attr.get('repo', '')}/{attr.get('source_file', '')}\",\n                        \"kind\": attr.get(\"kind\", \"code\"),\n                        \"is_seed\": is_seed,\n                        \"is_invariant\": bool(attr.get(\"_invariant\")),\n                        \"ppr\": round(ppr, 5),\n                        \"tokens\": est,\n                        \"rendered_block\": block,\n                    })\n                    included_nodes.add(nid)\n                    used_tokens += est\n\n            tier2_cap = int(max_tokens * 0.90)\n            for nid in ranked_neighbors:\n                if nid in included_nodes:\n                    continue\n                attr = self.nodes[nid]\n                ppr = ppr_scores.get(nid, 0.0)\n                sf = str(attr.get(\"source_file\", \"\"))\n                loc = str(attr.get(\"source_location\", \"\"))\n                line_txt = html.escape(\n                    f\"- {nid} | label={attr.get('label', nid)} | loc={sf}:{loc} | kind={attr.get('kind', 'code')} | ppr={ppr:.4f}\"\n                )\n                est = _estimate_tokens(line_txt)\n                if used_tokens + est <= min(tier2_cap, max_tokens):\n                    tier2_entries.append({\n                        \"id\": nid,\n                        \"label\": attr.get(\"label\", nid),\n                        \"repo\": attr.get(\"repo\", \"\"),\n                        \"file\": f\"{attr.get('repo', '')}/{sf}\",\n                        \"kind\": attr.get(\"kind\", \"code\"),\n                        \"ppr\": round(ppr, 5),\n                        \"tokens\": est,\n                        \"rendered_line\": line_txt,\n                    })\n                    included_nodes.add(nid)\n                    used_tokens += est\n                else:\n                    break\n\n            seen_topo: set[tuple[str, str, str]] = set()\n            for u in sorted(included_nodes):\n                for edge in self.out_edges.get(u, ()):\n                    v = edge[\"target\"]\n                    if v not in included_nodes:\n                        continue\n                    rel = edge[\"relation\"]\n                    sig = (u, v, rel)\n                    if sig in seen_topo:\n                        continue\n                    seen_topo.add(sig)\n                    undir = (u, v) if u < v else (v, u)\n                    is_bb = undir in backbone_edges\n                    edge_str = f\"{u} --[{rel}]--> {v}\"\n                    est = _estimate_tokens(edge_str)\n                    if used_tokens + est <= max_tokens:\n                        tier3_edges.append({\n                            \"source\": u,\n                            \"target\": v,\n                            \"relation\": rel,\n                            \"is_backbone\": is_bb,\n                            \"rendered_edge\": edge_str,\n                        })\n                        used_tokens += est\n\n            tier3_edges.sort(key=lambda e: (not e[\"is_backbone\"], e[\"source\"], e[\"target\"]))\n            repos = sorted({self.nodes[nid].get(\"repo\", \"default\") for nid in included_nodes})\n\n            return {\n                \"timestamp\": datetime.now(timezone.utc).strftime(\"%Y-%m-%dT%H:%M:%SZ\"),\n                \"project\": repos[0] if len(repos) == 1 else \"global\",\n                \"alpha\": eff_alpha,\n                \"requested_seeds\": seeds,\n                \"resolved_seeds\": seed_ids,\n                \"disjoint_components\": disjoint,\n                \"budget_tokens\": max_tokens,\n                \"actual_tokens\": min(used_tokens, max_tokens),\n                \"tier1_backbone\": tier1_entries,\n                \"tier2_neighbors\": tier2_entries,\n                \"tier3_topology\": tier3_edges,\n                \"stats\": {\n                    \"total_graph_nodes\": len(self.nodes),\n                    \"backbone_nodes\": len(backbone_nodes),\n                    \"packed_tier1\": len(tier1_entries),\n                    \"packed_tier2\": len(tier2_entries),\n                    \"packed_edges\": len(tier3_edges),\n                    \"compression_ratio\": round(len(included_nodes) / max(1, len(self.nodes)), 4),\n                },\n            }\n\n    def format_xml_pack(\n        self,\n        subgraph_result: dict[str, Any],\n        project_id: str | None = None,\n    ) -> str:\n        \"\"\"Render the extracted subgraph into `<xml_pack project=\"...\" actual_tokens=\"...\" budget_tokens=\"...\">`.\"\"\"\n        res = subgraph_result\n        proj = project_id or res.get(\"project\") or \"global\"\n        lines: list[str] = [\n            f'<xml_pack project=\"{html.escape(str(proj))}\" '\n            f'actual_tokens=\"{int(res[\"actual_tokens\"])}\" '\n            f'budget_tokens=\"{int(res[\"budget_tokens\"])}\" '\n            f'alpha=\"{res.get(\"alpha\", self.alpha)}\" '\n            f'disjoint=\"{str(res.get(\"disjoint_components\", False)).lower()}\">'\n        ]\n\n        lines.append(\"  <seeds>\")\n        for sid in res.get(\"resolved_seeds\", []):\n            lines.append(f'    <seed id=\"{html.escape(str(sid))}\" />')\n        lines.append(\"  </seeds>\")\n\n        lines.append(\"  <tier1_backbone>\")\n        for item in res.get(\"tier1_backbone\", []):\n            for line in str(item.get(\"rendered_block\", \"\")).splitlines():\n                lines.append(f\"    {line}\")\n        lines.append(\"  </tier1_backbone>\")\n\n        if res.get(\"tier2_neighbors\"):\n            lines.append(\"  <tier2_ppr_neighbors>\")\n            for item in res[\"tier2_neighbors\"]:\n                lines.append(f\"    {item['rendered_line']}\")\n            lines.append(\"  </tier2_ppr_neighbors>\")\n\n        if res.get(\"tier3_topology\"):\n            lines.append(\"  <topology_edges>\")\n            for edge in res[\"tier3_topology\"]:\n                tag = \"BACKBONE\" if edge.get(\"is_backbone\") else \"CONTEXT\"\n                lines.append(f\"    [{tag}] {html.escape(str(edge['rendered_edge']))}\")\n            lines.append(\"  </topology_edges>\")\n\n        lines.append(\"</xml_pack>\")\n        return \"\\n\".join(lines)\n\n    def search(self, query: str, limit: int = 15) -> list[dict[str, Any]]:\n        \"\"\"Compact symbol & domain invariant lookup (kept strictly under 1 KB payload).\"\"\"\n        q = query.strip().lower()\n        limit = max(1, min(int(limit), 15))\n        scored: list[tuple[float, dict[str, Any]]] = []\n\n        for nid, attr in self.nodes.items():\n            label = str(attr.get(\"label\", nid))\n            sf = str(attr.get(\"source_file\", \"\"))\n            kind = str(attr.get(\"kind\", \"code\"))\n            repo = str(attr.get(\"repo\", \"\"))\n\n            if not q:\n                sc = 5.0 if attr.get(\"_invariant\") else (2.0 if attr.get(\"_callable\") else 1.0)\n            else:\n                ll = label.lower()\n                nl = nid.lower()\n                sfl = sf.lower()\n                if ll == q or ll.rstrip(\"()\") == q:\n                    sc = 100.0\n                elif q in ll:\n                    sc = 70.0\n                elif q in sfl:\n                    sc = 45.0\n                elif q in nl:\n                    sc = 30.0\n                else:\n                    continue\n                if attr.get(\"_invariant\"):\n                    sc += 10.0\n\n            scored.append((\n                sc + min(self.raw_degree.get(nid, 0) * 0.05, 2.0),\n                {\n                    \"id\": nid,\n                    \"label\": label[:42],\n                    \"kind\": kind[:16],\n                    \"repo\": repo[:24],\n                    \"loc\": str(attr.get(\"source_location\", \"\"))[:16],\n                },\n            ))\n\n        scored.sort(key=lambda item: (-item[0], item[1][\"id\"]))\n        results: list[dict[str, Any]] = []\n        byte_budget = 880\n        used_bytes = 2\n        for _sc, entry in scored[:limit]:\n            chunk = json.dumps(entry, separators=(\",\", \":\"))\n            if used_bytes + len(chunk) + 1 > byte_budget:\n                break\n            results.append(entry)\n            used_bytes += len(chunk) + 1\n        return results\n\n    def build_cockpit_elk_graph(\n        self,\n        project_id: str | None = None,\n        level: int = 1,\n        highlight_nodes: Iterable[str] | None = None,\n    ) -> dict[str, Any]:\n        \"\"\"Build L0-L3 hierarchical ELK JSON topology for the Spatial Cockpit.\"\"\"\n        with self._lock:\n            lvl = max(0, min(int(level), 3))\n            hl_set = set(highlight_nodes or ())\n\n            repo_nodes: dict[str, list[str]] = defaultdict(list)\n            repo_meta: dict[str, dict[str, Any]] = {}\n            for nid, attr in self.nodes.items():\n                repo = str(attr.get(\"repo\", \"default\"))\n                repo_nodes[repo].append(nid)\n                if repo not in repo_meta:\n                    repo_meta[repo] = {\n                        \"host\": str(attr.get(\"host\", \"workspace\")),\n                        \"group\": str(attr.get(\"group\", \"services\")),\n                    }\n\n            if project_id and project_id in repo_nodes:\n                active_repos = [project_id] if lvl >= 3 else sorted(repo_nodes.keys())\n            else:\n                active_repos = sorted(repo_nodes.keys())\n\n            drill_repo = (\n                project_id\n                if (project_id and project_id in repo_nodes and lvl >= 2)\n                else (active_repos[0] if (lvl >= 3 and active_repos) else None)\n            )\n\n            hierarchy: dict[str, dict[str, list[str]]] = defaultdict(lambda: defaultdict(list))\n            for repo in active_repos:\n                meta = repo_meta[repo]\n                hierarchy[meta[\"host\"]][meta[\"group\"]].append(repo)\n\n            l0_children: list[dict[str, Any]] = []\n            l3_included: set[str] = set()\n            elk_edges: list[dict[str, Any]] = []\n\n            for host_name in sorted(hierarchy.keys()):\n                groups = hierarchy[host_name]\n                l1_children: list[dict[str, Any]] = []\n\n                if lvl > 0:\n                    for group_name in sorted(groups.keys()):\n                        repos = sorted(groups[group_name])\n                        l2_children: list[dict[str, Any]] = []\n\n                        for repo in repos:\n                            r_nids = repo_nodes[repo]\n                            file_cnt = sum(1 for n in r_nids if self.nodes[n].get(\"kind\") == \"file\")\n                            fn_cnt = sum(1 for n in r_nids if self.nodes[n].get(\"_callable\"))\n                            inv_cnt = sum(1 for n in r_nids if self.nodes[n].get(\"_invariant\"))\n                            is_drilled = (repo == drill_repo and lvl >= 3) or (\n                                lvl >= 3 and project_id is None and repo == active_repos[0]\n                            )\n\n                            l3_children: list[dict[str, Any]] = []\n                            if is_drilled:\n                                ranked = sorted(\n                                    r_nids,\n                                    key=lambda n: (\n                                        n not in hl_set,\n                                        not self.nodes[n].get(\"_invariant\", False),\n                                        not self.nodes[n].get(\"_callable\", False),\n                                        -self.raw_degree.get(n, 0),\n                                        n,\n                                    ),\n                                )[:24]\n                                for nid in ranked:\n                                    attr = self.nodes[nid]\n                                    l3_included.add(nid)\n                                    sf = str(attr.get(\"source_file\", \"\"))\n                                    loc = str(attr.get(\"source_location\", \"\"))\n                                    sub = f\"{sf}:{loc}\" if loc else sf\n                                    l3_children.append({\n                                        \"id\": nid,\n                                        \"width\": 216,\n                                        \"height\": 54,\n                                        \"properties\": {\n                                            \"tier\": \"L3\",\n                                            \"repo\": repo,\n                                            \"label\": str(attr.get(\"label\", nid)),\n                                            \"sub\": sub,\n                                            \"kind\": str(attr.get(\"kind\", \"code\")),\n                                            \"callable\": bool(attr.get(\"_callable\")),\n                                            \"invariant\": bool(attr.get(\"_invariant\")),\n                                            \"highlighted\": nid in hl_set,\n                                        },\n                                    })\n\n                            repo_hl = any(n in hl_set for n in r_nids) or f\"repo::{repo}\" in hl_set\n                            l2_node: dict[str, Any] = {\n                                \"id\": f\"repo::{repo}\",\n                                \"properties\": {\n                                    \"tier\": \"L2\",\n                                    \"repo\": repo,\n                                    \"label\": repo,\n                                    \"sub\": f\"{file_cnt} files | {fn_cnt} fn | {inv_cnt} inv | {len(r_nids)} nodes\",\n                                    \"drilled\": is_drilled,\n                                    \"highlighted\": repo_hl,\n                                },\n                                \"children\": l3_children,\n                            }\n                            if is_drilled:\n                                l2_node[\"layoutOptions\"] = {\n                                    \"elk.padding\": \"[top=44,left=18,bottom=18,right=18]\",\n                                    \"elk.algorithm\": \"layered\",\n                                    \"elk.direction\": \"RIGHT\",\n                                    \"elk.spacing.nodeNode\": \"18\",\n                                    \"elk.layered.spacing.nodeNodeBetweenLayers\": \"36\",\n                                }\n                            else:\n                                l2_node[\"width\"] = 236\n                                l2_node[\"height\"] = 78\n                            l2_children.append(l2_node)\n\n                        l1_node: dict[str, Any] = {\n                            \"id\": f\"group::{host_name}::{group_name}\",\n                            \"properties\": {\n                                \"tier\": \"L1\",\n                                \"label\": group_name,\n                                \"sub\": f\"{len(repos)} projects\",\n                                \"highlighted\": any(c[\"properties\"][\"highlighted\"] for c in l2_children),\n                            },\n                            \"children\": l2_children,\n                            \"layoutOptions\": {\n                                \"elk.padding\": \"[top=40,left=18,bottom=18,right=18]\",\n                                \"elk.algorithm\": \"layered\",\n                                \"elk.direction\": \"RIGHT\",\n                                \"elk.spacing.nodeNode\": \"22\",\n                                \"elk.layered.spacing.nodeNodeBetweenLayers\": \"42\",\n                            },\n                        }\n                        l1_children.append(l1_node)\n\n                host_repos = sum(len(v) for v in groups.values())\n                host_nodes = sum(len(repo_nodes[r]) for g_repos in groups.values() for r in g_repos)\n                l0_node: dict[str, Any] = {\n                    \"id\": f\"host::{host_name}\",\n                    \"properties\": {\n                        \"tier\": \"L0\",\n                        \"label\": host_name,\n                        \"sub\": f\"{host_repos} projects | {host_nodes} AST nodes\",\n                        \"highlighted\": any(c[\"properties\"][\"highlighted\"] for c in l1_children),\n                    },\n                    \"children\": l1_children,\n                }\n                if lvl == 0:\n                    l0_node[\"width\"] = 260\n                    l0_node[\"height\"] = 88\n                else:\n                    l0_node[\"layoutOptions\"] = {\n                        \"elk.padding\": \"[top=46,left=20,bottom=20,right=20]\",\n                        \"elk.algorithm\": \"layered\",\n                        \"elk.direction\": \"DOWN\",\n                        \"elk.spacing.nodeNode\": \"26\",\n                        \"elk.layered.spacing.nodeNodeBetweenLayers\": \"48\",\n                    }\n                l0_children.append(l0_node)\n\n            seen_elk_edges: set[tuple[str, str, str]] = set()\n            for u in sorted(l3_included):\n                for edge in self.out_edges.get(u, ()):\n                    v = edge[\"target\"]\n                    if v in l3_included and u != v:\n                        rel = edge[\"relation\"]\n                        sig = (u, v, rel)\n                        if sig in seen_elk_edges:\n                            continue\n                        seen_elk_edges.add(sig)\n                        elk_edges.append({\n                            \"id\": f\"e_l3::{u}->{v}::{rel}\",\n                            \"sources\": [u],\n                            \"targets\": [v],\n                            \"properties\": {\n                                \"kind\": \"L3_AST\",\n                                \"relation\": rel,\n                                \"highlighted\": (u in hl_set and v in hl_set),\n                            },\n                        })\n\n            if lvl >= 1:\n                cross_bundles: dict[tuple[str, str], dict[str, Any]] = {}\n                for u, edges in self.out_edges.items():\n                    ru = str(self.nodes[u].get(\"repo\", \"\"))\n                    for edge in edges:\n                        v = edge[\"target\"]\n                        rv = str(self.nodes[v].get(\"repo\", \"\"))\n                        if ru and rv and ru != rv and (ru in active_repos and rv in active_repos):\n                            pair = (f\"repo::{ru}\", f\"repo::{rv}\")\n                            if pair not in cross_bundles:\n                                cross_bundles[pair] = {\"count\": 0, \"relations\": set()}\n                            cross_bundles[pair][\"count\"] += 1\n                            cross_bundles[pair][\"relations\"].add(edge[\"relation\"])\n                for (src_r, dst_r), binfo in sorted(cross_bundles.items()):\n                    elk_edges.append({\n                        \"id\": f\"e_l2::{src_r}->{dst_r}\",\n                        \"sources\": [src_r],\n                        \"targets\": [dst_r],\n                        \"properties\": {\n                            \"kind\": \"L2_CROSS_REPO\",\n                            \"relation\": \", \".join(sorted(binfo[\"relations\"])[:2]),\n                            \"weight\": binfo[\"count\"],\n                            \"highlighted\": False,\n                        },\n                    })\n\n            return {\n                \"id\": \"root\",\n                \"layoutOptions\": {\n                    \"elk.algorithm\": \"layered\",\n                    \"elk.direction\": \"RIGHT\",\n                    \"elk.hierarchyHandling\": \"INCLUDE_CHILDREN\",\n                    \"elk.edgeRouting\": \"ORTHOGONAL\",\n                    \"elk.spacing.nodeNode\": \"48\",\n                    \"elk.layered.spacing.nodeNodeBetweenLayers\": \"72\",\n                },\n                \"children\": l0_children,\n                \"edges\": elk_edges,\n            }\n"
+  },
+  "hub/app/privacy_guard.py": {
+    "content": "\"\"\"Physical Tier-1 privacy isolation guard for global mesh synchronization.\"\"\"\n\nfrom __future__ import annotations\n\nfrom fnmatch import fnmatch\nfrom pathlib import Path\nfrom typing import Any, Iterable, Sequence\n\ntry:\n    import yaml\nexcept ImportError:  # pragma: no cover\n    yaml = None  # type: ignore[assignment]\n\n\nDEFAULT_TIER1_PATTERNS: tuple[str, ...] = (\n    \"*vault*\",\n    \"*secret*\",\n    \"*.private\",\n    \"private-*\",\n)\n\n\nclass PrivacyViolationError(PermissionError):\n    \"\"\"Raised when a Tier-1 private project is targeted for global synchronization.\"\"\"\n\n\ndef load_tier1_patterns(topology_path: str | Path | None = None) -> list[str]:\n    \"\"\"Load `tier1_private_patterns` from a topology YAML file if available.\"\"\"\n    patterns = list(DEFAULT_TIER1_PATTERNS)\n    if not topology_path or yaml is None:\n        return patterns\n    path = Path(topology_path)\n    if not path.is_file():\n        return patterns\n    try:\n        data = yaml.safe_load(path.read_text(encoding=\"utf-8\")) or {}\n    except Exception:\n        return patterns\n    if not isinstance(data, dict):\n        return patterns\n\n    raw_patterns: list[Any] = []\n    if isinstance(data.get(\"tier1_private_patterns\"), list):\n        raw_patterns.extend(data[\"tier1_private_patterns\"])\n    privacy_cfg = data.get(\"privacy\")\n    if isinstance(privacy_cfg, dict) and isinstance(privacy_cfg.get(\"tier1_private_patterns\"), list):\n        raw_patterns.extend(privacy_cfg[\"tier1_private_patterns\"])\n\n    for item in raw_patterns:\n        pat = str(item).strip()\n        if pat and pat not in patterns:\n            patterns.append(pat)\n    return patterns\n\n\ndef _candidate_strings(project: str | dict[str, Any]) -> list[str]:\n    if isinstance(project, str):\n        p = Path(project)\n        return [project, p.name]\n    candidates: list[str] = []\n    for key in (\"id\", \"project_id\", \"name\", \"slug\", \"path\"):\n        val = project.get(key)\n        if val is not None and str(val).strip():\n            sval = str(val).strip()\n            candidates.append(sval)\n            if \"/\" in sval or \"\\\\\" in sval:\n                candidates.append(Path(sval).name)\n    return candidates\n\n\ndef is_tier1_private(\n    project: str | dict[str, Any],\n    patterns: Sequence[str] | None = None,\n) -> bool:\n    \"\"\"Return True if a project is flagged `private: true` or matches Tier-1 patterns.\"\"\"\n    if isinstance(project, dict):\n        if bool(project.get(\"private\", False)):\n            return True\n        tier = str(project.get(\"tier\", \"\")).strip().lower()\n        if tier in {\"1\", \"tier1\", \"tier-1\", \"private\"}:\n            return True\n\n    active_patterns = list(patterns) if patterns is not None else list(DEFAULT_TIER1_PATTERNS)\n    if not active_patterns:\n        return False\n\n    candidates = _candidate_strings(project)\n    for cand in candidates:\n        cand_lower = cand.lower()\n        for pat in active_patterns:\n            pat_str = str(pat).strip()\n            if not pat_str:\n                continue\n            if fnmatch(cand_lower, pat_str.lower()):\n                return True\n    return False\n\n\ndef assert_global_sync_allowed(\n    project: str | dict[str, Any],\n    patterns: Sequence[str] | None = None,\n) -> None:\n    \"\"\"Raise PrivacyViolationError if `project` must never enter the global mesh.\"\"\"\n    if is_tier1_private(project, patterns=patterns):\n        label = (\n            project.get(\"id\") or project.get(\"name\") or project.get(\"path\") or \"unknown\"\n            if isinstance(project, dict)\n            else project\n        )\n        raise PrivacyViolationError(\n            f\"Project '{label}' is Tier-1 private and cannot be merged into the global mesh.\"\n        )\n\n\ndef filter_syncable_projects(\n    projects: Iterable[dict[str, Any] | str],\n    patterns: Sequence[str] | None = None,\n) -> list[dict[str, Any] | str]:\n    \"\"\"Return only projects cleared for global mesh synchronization.\"\"\"\n    syncable: list[dict[str, Any] | str] = []\n    for proj in projects:\n        if not is_tier1_private(proj, patterns=patterns):\n            syncable.append(proj)\n    return syncable\n"
+  },
+  "hub/app/ast_extractor.py": {
+    "content": "\"\"\"Local --code-only Tree-sitter AST extractor with stdlib AST / regex fallbacks.\"\"\"\n\nfrom __future__ import annotations\n\nimport ast\nimport json\nimport math\nimport os\nimport re\nimport subprocess\nimport sys\nfrom datetime import datetime, timezone\nfrom fnmatch import fnmatch\nfrom pathlib import Path\nfrom typing import Any\n\nfrom hub.app.privacy_guard import is_tier1_private, load_tier1_patterns\n\ntry:\n    from tree_sitter import Language, Parser  # type: ignore[import-not-found]\nexcept ImportError:  # pragma: no cover\n    Language = None  # type: ignore[assignment]\n    Parser = None  # type: ignore[assignment]\n\ntry:\n    import tree_sitter_python as _ts_py  # type: ignore[import-not-found]\nexcept ImportError:  # pragma: no cover\n    _ts_py = None\n\ntry:\n    import tree_sitter_javascript as _ts_js  # type: ignore[import-not-found]\nexcept ImportError:  # pragma: no cover\n    _ts_js = None\n\ntry:\n    import tree_sitter_typescript as _ts_ts  # type: ignore[import-not-found]\nexcept ImportError:  # pragma: no cover\n    _ts_ts = None\n\n\nCODE_EXTENSIONS: dict[str, str] = {\n    \".py\": \"python\",\n    \".js\": \"javascript\",\n    \".mjs\": \"javascript\",\n    \".cjs\": \"javascript\",\n    \".jsx\": \"javascript\",\n    \".ts\": \"typescript\",\n    \".tsx\": \"tsx\",\n}\n\nDEFAULT_IGNORED_DIRS: frozenset[str] = frozenset({\n    \".git\",\n    \"node_modules\",\n    \"dist\",\n    \"build\",\n    \"vendor\",\n    \".venv\",\n    \"venv\",\n    \"target\",\n    \"__pycache__\",\n    \".pytest_cache\",\n    \".mypy_cache\",\n    \".ruff_cache\",\n    \"graphify-out\",\n    \".steiner\",\n    \".steiner-hub\",\n})\n\nDEFAULT_IGNORED_GLOBS: tuple[str, ...] = (\n    \"*.min.js\",\n    \"*.min.css\",\n    \"*.graph.json\",\n    \"*.pyc\",\n    \"*.pyo\",\n    \"*.map\",\n)\n\n\ndef get_workspace_root() -> Path:\n    return Path(os.environ.get(\"STEINER_WORKSPACE_ROOT\", \"/srv/workspaces\")).expanduser().resolve()\n\n\ndef get_state_dir(workspace_root: Path | None = None) -> Path:\n    env_dir = os.environ.get(\"STEINER_STATE_DIR\", \"\").strip()\n    if env_dir:\n        return Path(env_dir).expanduser().resolve()\n    root = workspace_root or get_workspace_root()\n    return (root / \".steiner-hub\").resolve()\n\n\ndef _sanitize_id(raw: str) -> str:\n    cleaned = re.sub(r\"[^A-Za-z0-9._-]+\", \"_\", raw.strip())\n    return cleaned.strip(\"_\") or \"item\"\n\n\ndef _estimate_tokens(text: str) -> int:\n    return max(1, math.ceil(len(text) / 3.6))\n\n\ndef _load_ignore_rules(repo_root: Path) -> tuple[set[str], list[str]]:\n    dir_names = set(DEFAULT_IGNORED_DIRS)\n    globs = list(DEFAULT_IGNORED_GLOBS)\n    ignore_file = repo_root / \".graphifyignore\"\n    if ignore_file.is_file():\n        for raw_line in ignore_file.read_text(encoding=\"utf-8\", errors=\"replace\").splitlines():\n            line = raw_line.strip()\n            if not line or line.startswith(\"#\"):\n                continue\n            if line.endswith(\"/\"):\n                dir_names.add(line.rstrip(\"/\"))\n                globs.append(line.rstrip(\"/\") + \"/*\")\n            else:\n                globs.append(line)\n    return dir_names, globs\n\n\ndef _is_ignored(rel_posix: str, is_dir: bool, dir_names: set[str], globs: list[str]) -> bool:\n    parts = rel_posix.split(\"/\")\n    if any(p in dir_names for p in parts):\n        return True\n    name = parts[-1]\n    for pat in globs:\n        pat_clean = pat.rstrip(\"/\")\n        if fnmatch(rel_posix, pat_clean) or fnmatch(name, pat_clean):\n            return True\n        if is_dir and fnmatch(rel_posix + \"/\", pat):\n            return True\n    return False\n\n\ndef _get_ts_parser(lang_name: str) -> Any:\n    if Language is None or Parser is None:\n        return None\n    try:\n        if lang_name == \"python\" and _ts_py is not None:\n            return Parser(Language(_ts_py.language()))\n        if lang_name == \"javascript\" and _ts_js is not None:\n            return Parser(Language(_ts_js.language()))\n        if lang_name == \"typescript\" and _ts_ts is not None:\n            return Parser(Language(_ts_ts.language_typescript()))\n        if lang_name == \"tsx\" and _ts_ts is not None:\n            return Parser(Language(_ts_ts.language_tsx()))\n    except Exception:\n        return None\n    return None\n\n\ndef _node_text(node: Any, source_bytes: bytes) -> str:\n    return source_bytes[node.start_byte : node.end_byte].decode(\"utf-8\", errors=\"replace\")\n\n\ndef _extract_python_stdlib(\n    source_text: str,\n) -> tuple[list[dict[str, Any]], list[str], list[tuple[str, str]]]:\n    defs: list[dict[str, Any]] = []\n    imports: list[str] = []\n    calls: list[tuple[str, str]] = []\n    try:\n        tree = ast.parse(source_text)\n    except SyntaxError:\n        return defs, imports, calls\n\n    lines = source_text.splitlines()\n\n    def _collect_calls(body_node: ast.AST, caller_qname: str) -> None:\n        for child in ast.walk(body_node):\n            if isinstance(child, ast.Call):\n                func = child.func\n                if isinstance(func, ast.Name):\n                    calls.append((caller_qname, func.id))\n                elif isinstance(func, ast.Attribute):\n                    calls.append((caller_qname, func.attr))\n\n    for node in tree.body:\n        if isinstance(node, ast.Import):\n            for alias in node.names:\n                imports.append(alias.name)\n        elif isinstance(node, ast.ImportFrom):\n            mod = node.module or \"\"\n            if mod:\n                imports.append(mod)\n        elif isinstance(node, ast.ClassDef):\n            start = node.lineno\n            end = getattr(node, \"end_lineno\", start) or start\n            snippet = \"\\n\".join(lines[start - 1 : end])\n            defs.append({\n                \"qname\": node.name,\n                \"label\": node.name,\n                \"kind\": \"class\",\n                \"callable\": False,\n                \"parent\": None,\n                \"start_line\": start,\n                \"end_line\": end,\n                \"tokens_est\": _estimate_tokens(snippet),\n                \"bases\": [\n                    b.id for b in node.bases if isinstance(b, ast.Name)\n                ],\n            })\n            for sub in node.body:\n                if isinstance(sub, (ast.FunctionDef, ast.AsyncFunctionDef)):\n                    m_start = sub.lineno\n                    m_end = getattr(sub, \"end_lineno\", m_start) or m_start\n                    m_snip = \"\\n\".join(lines[m_start - 1 : m_end])\n                    qname = f\"{node.name}.{sub.name}\"\n                    defs.append({\n                        \"qname\": qname,\n                        \"label\": f\"{qname}()\",\n                        \"kind\": \"method\",\n                        \"callable\": True,\n                        \"parent\": node.name,\n                        \"start_line\": m_start,\n                        \"end_line\": m_end,\n                        \"tokens_est\": _estimate_tokens(m_snip),\n                        \"bases\": [],\n                    })\n                    _collect_calls(sub, qname)\n        elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):\n            start = node.lineno\n            end = getattr(node, \"end_lineno\", start) or start\n            snippet = \"\\n\".join(lines[start - 1 : end])\n            defs.append({\n                \"qname\": node.name,\n                \"label\": f\"{node.name}()\",\n                \"kind\": \"function\",\n                \"callable\": True,\n                \"parent\": None,\n                \"start_line\": start,\n                \"end_line\": end,\n                \"tokens_est\": _estimate_tokens(snippet),\n                \"bases\": [],\n            })\n            _collect_calls(node, node.name)\n        else:\n            _collect_calls(node, \"__module__\")\n\n    return defs, imports, calls\n\n\ndef _extract_python_treesitter(\n    source_bytes: bytes, parser: Any\n) -> tuple[list[dict[str, Any]], list[str], list[tuple[str, str]]]:\n    tree = parser.parse(source_bytes)\n    root = tree.root_node\n    defs: list[dict[str, Any]] = []\n    imports: list[str] = []\n    calls: list[tuple[str, str]] = []\n\n    def _walk_calls(node: Any, caller_qname: str) -> None:\n        if node.type == \"call\":\n            fn = node.child_by_field_name(\"function\")\n            if fn is not None:\n                if fn.type == \"identifier\":\n                    calls.append((caller_qname, _node_text(fn, source_bytes)))\n                elif fn.type == \"attribute\":\n                    attr = fn.child_by_field_name(\"attribute\")\n                    if attr is not None:\n                        calls.append((caller_qname, _node_text(attr, source_bytes)))\n        for ch in node.children:\n            if ch.type not in (\"function_definition\", \"class_definition\"):\n                _walk_calls(ch, caller_qname)\n\n    def _walk_top(node: Any, current_class: str | None = None) -> None:\n        if node.type == \"import_statement\":\n            txt = _node_text(node, source_bytes)\n            for part in re.findall(r\"import\\s+([A-Za-z0-9_.]+)\", txt):\n                imports.append(part)\n        elif node.type == \"import_from_statement\":\n            mod = node.child_by_field_name(\"module_name\")\n            if mod is not None:\n                imports.append(_node_text(mod, source_bytes))\n        elif node.type == \"class_definition\":\n            name_node = node.child_by_field_name(\"name\")\n            cls_name = _node_text(name_node, source_bytes) if name_node else \"Class\"\n            start = node.start_point[0] + 1\n            end = node.end_point[0] + 1\n            defs.append({\n                \"qname\": cls_name,\n                \"label\": cls_name,\n                \"kind\": \"class\",\n                \"callable\": False,\n                \"parent\": None,\n                \"start_line\": start,\n                \"end_line\": end,\n                \"tokens_est\": _estimate_tokens(_node_text(node, source_bytes)),\n                \"bases\": [],\n            })\n            body = node.child_by_field_name(\"body\")\n            if body is not None:\n                for ch in body.children:\n                    _walk_top(ch, current_class=cls_name)\n            return\n        elif node.type == \"function_definition\":\n            name_node = node.child_by_field_name(\"name\")\n            fn_name = _node_text(name_node, source_bytes) if name_node else \"fn\"\n            start = node.start_point[0] + 1\n            end = node.end_point[0] + 1\n            qname = f\"{current_class}.{fn_name}\" if current_class else fn_name\n            defs.append({\n                \"qname\": qname,\n                \"label\": f\"{qname}()\",\n                \"kind\": \"method\" if current_class else \"function\",\n                \"callable\": True,\n                \"parent\": current_class,\n                \"start_line\": start,\n                \"end_line\": end,\n                \"tokens_est\": _estimate_tokens(_node_text(node, source_bytes)),\n                \"bases\": [],\n            })\n            body = node.child_by_field_name(\"body\")\n            if body is not None:\n                _walk_calls(body, qname)\n            return\n        elif node.type == \"decorated_definition\":\n            for ch in node.children:\n                if ch.type in (\"class_definition\", \"function_definition\"):\n                    _walk_top(ch, current_class=current_class)\n            return\n        else:\n            if current_class is None and node.type == \"expression_statement\":\n                _walk_calls(node, \"__module__\")\n        for ch in node.children:\n            if node.type == \"module\":\n                _walk_top(ch, current_class=None)\n\n    _walk_top(root)\n    return defs, imports, calls\n\n\ndef _extract_jsts_regex(\n    source_text: str,\n) -> tuple[list[dict[str, Any]], list[str], list[tuple[str, str]]]:\n    defs: list[dict[str, Any]] = []\n    imports: list[str] = []\n    calls: list[tuple[str, str]] = []\n    lines = source_text.splitlines()\n    total = len(lines)\n\n    for m in re.finditer(r\"\"\"(?:import\\s+.*?\\s+from\\s+|require\\s*\\(\\s*)['\"]([^'\"]+)['\"]\"\"\", source_text):\n        imports.append(m.group(1))\n\n    class_pat = re.compile(r\"^\\s*(?:export\\s+)?(?:default\\s+)?(?:abstract\\s+)?class\\s+([A-Za-z_$][A-Za-z0-9_$]*)\")\n    fn_pat = re.compile(\n        r\"^\\s*(?:export\\s+)?(?:default\\s+)?(?:async\\s+)?function\\s+([A-Za-z_$][A-Za-z0-9_$]*)\\s*\\(\"\n    )\n    arrow_pat = re.compile(\n        r\"^\\s*(?:export\\s+)?(?:const|let|var)\\s+([A-Za-z_$][A-Za-z0-9_$]*)\\s*=\\s*(?:async\\s*)?(?:\\([^)]*\\)|[A-Za-z_$][A-Za-z0-9_$]*)\\s*=>\"\n    )\n    iface_pat = re.compile(r\"^\\s*(?:export\\s+)?(?:interface|type)\\s+([A-Za-z_$][A-Za-z0-9_$]*)\")\n    method_pat = re.compile(r\"^\\s{2,4}(?:async\\s+)?([A-Za-z_$][A-Za-z0-9_$]*)\\s*\\([^)]*\\)\\s*\\{\")\n\n    current_class: str | None = None\n    brace_depth = 0\n    class_depth = -1\n\n    for idx, line in enumerate(lines, start=1):\n        stripped = line.strip()\n        if not stripped or stripped.startswith(\"//\"):\n            continue\n\n        if current_class is not None and brace_depth <= class_depth:\n            current_class = None\n            class_depth = -1\n\n        cm = class_pat.match(line)\n        fm = fn_pat.match(line)\n        am = arrow_pat.match(line)\n        im = iface_pat.match(line)\n        mm = method_pat.match(line) if current_class else None\n\n        if cm:\n            cname = cm.group(1)\n            current_class = cname\n            class_depth = brace_depth\n            defs.append({\n                \"qname\": cname,\n                \"label\": cname,\n                \"kind\": \"class\",\n                \"callable\": False,\n                \"parent\": None,\n                \"start_line\": idx,\n                \"end_line\": min(total, idx + 20),\n                \"tokens_est\": 24,\n                \"bases\": [],\n            })\n        elif mm and mm.group(1) not in {\"if\", \"for\", \"while\", \"switch\", \"catch\", \"constructor\"}:\n            mname = mm.group(1)\n            qname = f\"{current_class}.{mname}\"\n            defs.append({\n                \"qname\": qname,\n                \"label\": f\"{qname}()\",\n                \"kind\": \"method\",\n                \"callable\": True,\n                \"parent\": current_class,\n                \"start_line\": idx,\n                \"end_line\": min(total, idx + 14),\n                \"tokens_est\": 18,\n                \"bases\": [],\n            })\n        elif fm:\n            fname = fm.group(1)\n            defs.append({\n                \"qname\": fname,\n                \"label\": f\"{fname}()\",\n                \"kind\": \"function\",\n                \"callable\": True,\n                \"parent\": None,\n                \"start_line\": idx,\n                \"end_line\": min(total, idx + 16),\n                \"tokens_est\": 20,\n                \"bases\": [],\n            })\n        elif am:\n            aname = am.group(1)\n            defs.append({\n                \"qname\": aname,\n                \"label\": f\"{aname}()\",\n                \"kind\": \"function\",\n                \"callable\": True,\n                \"parent\": None,\n                \"start_line\": idx,\n                \"end_line\": min(total, idx + 12),\n                \"tokens_est\": 16,\n                \"bases\": [],\n            })\n        elif im:\n            iname = im.group(1)\n            defs.append({\n                \"qname\": iname,\n                \"label\": iname,\n                \"kind\": \"interface\",\n                \"callable\": False,\n                \"parent\": None,\n                \"start_line\": idx,\n                \"end_line\": min(total, idx + 8),\n                \"tokens_est\": 12,\n                \"bases\": [],\n            })\n\n        brace_depth += line.count(\"{\") - line.count(\"}\")\n\n    for call_m in re.finditer(r\"\\b([A-Za-z_$][A-Za-z0-9_$]*)\\s*\\(\", source_text):\n        callee = call_m.group(1)\n        if callee not in {\"if\", \"for\", \"while\", \"switch\", \"catch\", \"function\", \"return\", \"typeof\"}:\n            calls.append((\"__module__\", callee))\n\n    return defs, imports, calls\n\n\ndef _extract_jsts_treesitter(\n    source_bytes: bytes, parser: Any\n) -> tuple[list[dict[str, Any]], list[str], list[tuple[str, str]]]:\n    tree = parser.parse(source_bytes)\n    root = tree.root_node\n    defs: list[dict[str, Any]] = []\n    imports: list[str] = []\n    calls: list[tuple[str, str]] = []\n\n    def _walk_calls(node: Any, caller: str) -> None:\n        if node.type == \"call_expression\":\n            fn = node.child_by_field_name(\"function\")\n            if fn is not None:\n                if fn.type == \"identifier\":\n                    calls.append((caller, _node_text(fn, source_bytes)))\n                elif fn.type == \"member_expression\":\n                    prop = fn.child_by_field_name(\"property\")\n                    if prop is not None:\n                        calls.append((caller, _node_text(prop, source_bytes)))\n        for ch in node.children:\n            _walk_calls(ch, caller)\n\n    def _walk(node: Any, current_class: str | None = None) -> None:\n        ntype = node.type\n        if ntype == \"import_statement\":\n            src = node.child_by_field_name(\"source\")\n            if src is not None:\n                imports.append(_node_text(src, source_bytes).strip(\"'\\\"\"))\n        elif ntype in (\"class_declaration\", \"class\"):\n            name_n = node.child_by_field_name(\"name\")\n            cname = _node_text(name_n, source_bytes) if name_n else \"Class\"\n            defs.append({\n                \"qname\": cname,\n                \"label\": cname,\n                \"kind\": \"class\",\n                \"callable\": False,\n                \"parent\": None,\n                \"start_line\": node.start_point[0] + 1,\n                \"end_line\": node.end_point[0] + 1,\n                \"tokens_est\": _estimate_tokens(_node_text(node, source_bytes)),\n                \"bases\": [],\n            })\n            body = node.child_by_field_name(\"body\")\n            if body is not None:\n                for ch in body.children:\n                    _walk(ch, current_class=cname)\n            return\n        elif ntype == \"method_definition\":\n            name_n = node.child_by_field_name(\"name\")\n            mname = _node_text(name_n, source_bytes) if name_n else \"method\"\n            qname = f\"{current_class}.{mname}\" if current_class else mname\n            defs.append({\n                \"qname\": qname,\n                \"label\": f\"{qname}()\",\n                \"kind\": \"method\",\n                \"callable\": True,\n                \"parent\": current_class,\n                \"start_line\": node.start_point[0] + 1,\n                \"end_line\": node.end_point[0] + 1,\n                \"tokens_est\": _estimate_tokens(_node_text(node, source_bytes)),\n                \"bases\": [],\n            })\n            _walk_calls(node, qname)\n            return\n        elif ntype in (\"function_declaration\", \"generator_function_declaration\"):\n            name_n = node.child_by_field_name(\"name\")\n            fname = _node_text(name_n, source_bytes) if name_n else \"fn\"\n            defs.append({\n                \"qname\": fname,\n                \"label\": f\"{fname}()\",\n                \"kind\": \"function\",\n                \"callable\": True,\n                \"parent\": None,\n                \"start_line\": node.start_point[0] + 1,\n                \"end_line\": node.end_point[0] + 1,\n                \"tokens_est\": _estimate_tokens(_node_text(node, source_bytes)),\n                \"bases\": [],\n            })\n            _walk_calls(node, fname)\n            return\n        elif ntype == \"variable_declarator\":\n            name_n = node.child_by_field_name(\"name\")\n            val_n = node.child_by_field_name(\"value\")\n            if name_n is not None and val_n is not None and val_n.type in (\"arrow_function\", \"function_expression\"):\n                vname = _node_text(name_n, source_bytes)\n                defs.append({\n                    \"qname\": vname,\n                    \"label\": f\"{vname}()\",\n                    \"kind\": \"function\",\n                    \"callable\": True,\n                    \"parent\": None,\n                    \"start_line\": node.start_point[0] + 1,\n                    \"end_line\": node.end_point[0] + 1,\n                    \"tokens_est\": _estimate_tokens(_node_text(node, source_bytes)),\n                    \"bases\": [],\n                })\n                _walk_calls(val_n, vname)\n                return\n        elif ntype in (\"interface_declaration\", \"type_alias_declaration\"):\n            name_n = node.child_by_field_name(\"name\")\n            iname = _node_text(name_n, source_bytes) if name_n else \"Type\"\n            defs.append({\n                \"qname\": iname,\n                \"label\": iname,\n                \"kind\": \"interface\",\n                \"callable\": False,\n                \"parent\": None,\n                \"start_line\": node.start_point[0] + 1,\n                \"end_line\": node.end_point[0] + 1,\n                \"tokens_est\": _estimate_tokens(_node_text(node, source_bytes)),\n                \"bases\": [],\n            })\n        for ch in node.children:\n            _walk(ch, current_class=current_class)\n\n    _walk(root)\n    return defs, imports, calls\n\n\ndef _extract_file(\n    file_path: Path, lang_name: str\n) -> tuple[list[dict[str, Any]], list[str], list[tuple[str, str]], int, int]:\n    raw_bytes = file_path.read_bytes()\n    text = raw_bytes.decode(\"utf-8\", errors=\"replace\")\n    line_count = max(1, text.count(\"\\n\") + (0 if text.endswith(\"\\n\") else 1))\n    toks = _estimate_tokens(text)\n\n    parser = _get_ts_parser(lang_name)\n    if lang_name == \"python\":\n        if parser is not None:\n            defs, imports, calls = _extract_python_treesitter(raw_bytes, parser)\n        else:\n            defs, imports, calls = _extract_python_stdlib(text)\n    else:\n        if parser is not None:\n            defs, imports, calls = _extract_jsts_treesitter(raw_bytes, parser)\n        else:\n            defs, imports, calls = _extract_jsts_regex(text)\n\n    return defs, imports, calls, line_count, toks\n\n\ndef _load_registry(registry_path: Path) -> dict[str, Any]:\n    if registry_path.is_file():\n        try:\n            data = json.loads(registry_path.read_text(encoding=\"utf-8\"))\n            if isinstance(data, dict) and isinstance(data.get(\"projects\"), dict):\n                return data\n        except Exception:\n            pass\n    return {\"projects\": {}}\n\n\ndef _save_registry(registry_path: Path, registry: dict[str, Any]) -> None:\n    registry_path.parent.mkdir(parents=True, exist_ok=True)\n    registry_path.write_text(json.dumps(registry, indent=2), encoding=\"utf-8\")\n\n\ndef index_project(\n    repo_path: str | Path,\n    project_id: str | None = None,\n    name: str | None = None,\n    private: bool | None = None,\n    group: str = \"services\",\n    host: str = \"workspace\",\n    state_dir: str | Path | None = None,\n) -> dict[str, Any]:\n    \"\"\"Index a repository (--code-only) and persist its enriched AST graph JSON.\"\"\"\n    repo_root = Path(repo_path).expanduser().resolve()\n    if not repo_root.is_dir():\n        raise FileNotFoundError(f\"Repository path does not exist: {repo_root}\")\n\n    pid = _sanitize_id(project_id or repo_root.name)\n    pname = (name or pid).strip()\n    target_state_dir = Path(state_dir).expanduser().resolve() if state_dir else get_state_dir()\n    projects_dir = target_state_dir / \"projects\"\n    projects_dir.mkdir(parents=True, exist_ok=True)\n\n    patterns = load_tier1_patterns(repo_root / \"topology.yaml\")\n    auto_private = is_tier1_private({\"id\": pid, \"name\": pname, \"path\": str(repo_root)}, patterns=patterns)\n    is_private = bool(private) or auto_private\n\n    dir_names, ignore_globs = _load_ignore_rules(repo_root)\n\n    nodes: list[dict[str, Any]] = []\n    links: list[dict[str, Any]] = []\n    symbol_index: dict[str, list[str]] = {}\n    file_node_by_stem: dict[str, str] = {}\n    file_node_by_rel: dict[str, str] = {}\n    pending_imports: list[tuple[str, str]] = []\n    pending_calls: list[tuple[str, str]] = []\n    pending_bases: list[tuple[str, str]] = []\n\n    file_count = 0\n    callable_count = 0\n    total_tokens_est = 0\n\n    for root_str, dirs, files in os.walk(repo_root):\n        cur_root = Path(root_str)\n        rel_dir = cur_root.relative_to(repo_root).as_posix()\n        rel_dir_prefix = \"\" if rel_dir == \".\" else rel_dir + \"/\"\n\n        kept_dirs: list[str] = []\n        for d in sorted(dirs):\n            rel_d = f\"{rel_dir_prefix}{d}\"\n            if not _is_ignored(rel_d, is_dir=True, dir_names=dir_names, globs=ignore_globs):\n                kept_dirs.append(d)\n        dirs[:] = kept_dirs\n\n        for fname in sorted(files):\n            fpath = cur_root / fname\n            ext = fpath.suffix.lower()\n            if ext not in CODE_EXTENSIONS:\n                continue\n            rel_f = f\"{rel_dir_prefix}{fname}\"\n            if _is_ignored(rel_f, is_dir=False, dir_names=dir_names, globs=ignore_globs):\n                continue\n\n            lang_name = CODE_EXTENSIONS[ext]\n            defs, imports, calls, line_count, f_tokens = _extract_file(fpath, lang_name)\n            file_count += 1\n            total_tokens_est += f_tokens\n\n            file_nid = f\"{pid}::{_sanitize_id(rel_f)}\"\n            file_node_by_rel[rel_f] = file_nid\n            stem_no_ext = rel_f.rsplit(\".\", 1)[0].replace(\"/\", \".\")\n            file_node_by_stem[stem_no_ext] = file_nid\n            file_node_by_stem[fpath.stem] = file_nid\n\n            nodes.append({\n                \"id\": file_nid,\n                \"label\": rel_f,\n                \"kind\": \"file\",\n                \"type\": \"code\",\n                \"file_type\": \"code\",\n                \"callable\": False,\n                \"_callable\": False,\n                \"repo\": pid,\n                \"project_id\": pid,\n                \"group\": group,\n                \"host\": host,\n                \"source_file\": rel_f,\n                \"source_location\": f\"L1-L{line_count}\",\n                \"start_line\": 1,\n                \"end_line\": line_count,\n                \"tokens_est\": f_tokens,\n            })\n\n            def_id_map: dict[str, str] = {\"__module__\": file_nid}\n            for item in defs:\n                qname = item[\"qname\"]\n                def_nid = f\"{pid}::{_sanitize_id(rel_f)}::{_sanitize_id(qname)}\"\n                def_id_map[qname] = def_nid\n                short_name = qname.split(\".\")[-1]\n                symbol_index.setdefault(short_name, []).append(def_nid)\n                symbol_index.setdefault(qname, []).append(def_nid)\n                if item[\"callable\"]:\n                    callable_count += 1\n\n                nodes.append({\n                    \"id\": def_nid,\n                    \"label\": item[\"label\"],\n                    \"kind\": item[\"kind\"],\n                    \"type\": \"code\",\n                    \"file_type\": \"code\",\n                    \"callable\": item[\"callable\"],\n                    \"_callable\": item[\"callable\"],\n                    \"repo\": pid,\n                    \"project_id\": pid,\n                    \"group\": group,\n                    \"host\": host,\n                    \"source_file\": rel_f,\n                    \"source_location\": f\"L{item['start_line']}-L{item['end_line']}\",\n                    \"start_line\": item[\"start_line\"],\n                    \"end_line\": item[\"end_line\"],\n                    \"tokens_est\": item[\"tokens_est\"],\n                })\n\n                parent_nid = def_id_map.get(item[\"parent\"] or \"__module__\", file_nid)\n                links.append({\n                    \"source\": parent_nid,\n                    \"target\": def_nid,\n                    \"relation\": \"defines\",\n                    \"weight\": 1.0,\n                })\n\n                for base_name in item.get(\"bases\", []):\n                    pending_bases.append((def_nid, base_name))\n\n            for imp in imports:\n                pending_imports.append((file_nid, imp))\n\n            for caller_qname, callee_name in calls:\n                caller_nid = def_id_map.get(caller_qname, file_nid)\n                pending_calls.append((caller_nid, callee_name))\n\n    seen_edges: set[tuple[str, str, str]] = {\n        (l[\"source\"], l[\"target\"], l[\"relation\"]) for l in links\n    }\n\n    def _add_edge(src: str, dst: str, relation: str, weight: float = 1.0) -> None:\n        if src == dst:\n            return\n        sig = (src, dst, relation)\n        if sig not in seen_edges:\n            seen_edges.add(sig)\n            links.append({\"source\": src, \"target\": dst, \"relation\": relation, \"weight\": weight})\n\n    for file_nid, imp_mod in pending_imports:\n        norm_mod = imp_mod.lstrip(\"./\").replace(\"/\", \".\")\n        target_file = file_node_by_stem.get(norm_mod) or file_node_by_stem.get(norm_mod.split(\".\")[-1])\n        if target_file:\n            _add_edge(file_nid, target_file, \"imports_from\", weight=1.0)\n\n    for caller_nid, callee_name in pending_calls:\n        targets = symbol_index.get(callee_name, [])\n        for tgt in targets[:2]:\n            _add_edge(caller_nid, tgt, \"calls\", weight=1.0)\n\n    for sub_nid, base_name in pending_bases:\n        for tgt in symbol_index.get(base_name, [])[:1]:\n            _add_edge(sub_nid, tgt, \"inherits\", weight=1.0)\n\n    graph_path = projects_dir / f\"{pid}.json\"\n    graph_payload: dict[str, Any] = {\n        \"project_id\": pid,\n        \"repo\": pid,\n        \"name\": pname,\n        \"private\": is_private,\n        \"group\": group,\n        \"host\": host,\n        \"indexed_at\": datetime.now(timezone.utc).strftime(\"%Y-%m-%dT%H:%M:%SZ\"),\n        \"nodes\": nodes,\n        \"links\": links,\n    }\n    graph_path.write_text(json.dumps(graph_payload, indent=2), encoding=\"utf-8\")\n\n    enrich_script = repo_root / \"scripts\" / \"enrich_graph.py\"\n    if enrich_script.is_file():\n        try:\n            subprocess.run(\n                [sys.executable, str(enrich_script), str(graph_path)],\n                cwd=str(repo_root),\n                check=False,\n                timeout=30,\n                stdout=subprocess.DEVNULL,\n                stderr=subprocess.DEVNULL,\n            )\n            enriched = json.loads(graph_path.read_text(encoding=\"utf-8\"))\n            for node in enriched.get(\"nodes\", []):\n                if isinstance(node, dict):\n                    node.setdefault(\"repo\", pid)\n                    node.setdefault(\"project_id\", pid)\n                    node.setdefault(\"group\", group)\n                    node.setdefault(\"host\", host)\n            enriched[\"project_id\"] = pid\n            enriched[\"repo\"] = pid\n            enriched[\"name\"] = pname\n            enriched[\"private\"] = is_private\n            enriched[\"group\"] = group\n            enriched[\"host\"] = host\n            graph_payload = enriched\n            graph_path.write_text(json.dumps(graph_payload, indent=2), encoding=\"utf-8\")\n        except Exception:\n            pass\n\n    final_nodes = graph_payload.get(\"nodes\", [])\n    final_links = graph_payload.get(\"links\", graph_payload.get(\"edges\", []))\n    invariant_count = sum(\n        1 for n in final_nodes if isinstance(n, dict) and n.get(\"kind\") == \"domain_invariant\"\n    )\n\n    registry_path = target_state_dir / \"registry.json\"\n    registry = _load_registry(registry_path)\n    registry[\"projects\"][pid] = {\n        \"id\": pid,\n        \"name\": pname,\n        \"path\": str(repo_root),\n        \"private\": is_private,\n        \"group\": group,\n        \"host\": host,\n        \"graph_path\": str(graph_path),\n        \"files\": file_count,\n        \"nodes\": len(final_nodes),\n        \"edges\": len(final_links),\n        \"callables\": callable_count,\n        \"invariants\": invariant_count,\n        \"tokens_est\": total_tokens_est,\n        \"indexed_at\": graph_payload[\"indexed_at\"],\n    }\n    _save_registry(registry_path, registry)\n\n    return {\n        \"project\": registry[\"projects\"][pid],\n        \"graph_path\": str(graph_path),\n        \"nodes\": len(final_nodes),\n        \"edges\": len(final_links),\n        \"files\": file_count,\n        \"invariants\": invariant_count,\n    }\n"
+  },
+  "bootstrap/enrich_graph.example.py": {
+    "content": "#!/usr/bin/env python3\n\"\"\"Example Phase-0 domain invariant enrichment hook for Steiner AST graphs.\n\nAnchors high-priority ``domain_invariant`` nodes into ``.steiner/graph.json`` or\n``graphify-out/graph.json`` with low-weight ``governs`` edges so Kou Steiner\ncontext packing automatically surfaces non-obvious operational rules whenever\ngoverned modules are seeded.\n\"\"\"\n\nfrom __future__ import annotations\n\nimport argparse\nimport json\nfrom pathlib import Path\nfrom typing import Any, Dict, List\n\nDEFAULT_CANDIDATES = (\n    Path(\".steiner/graph.json\"),\n    Path(\"graphify-out/graph.json\"),\n)\n\nDOMAIN_INVARIANTS: List[Dict[str, Any]] = [\n    {\n        \"node\": {\n            \"id\": \"invariant::symlink_ssot\",\n            \"kind\": \"domain_invariant\",\n            \"weight\": 10.0,\n            \"summary\": (\n                \"Never copy static asset bundles across build directories; \"\n                \"preserve the symlinked single source of truth path.\"\n            ),\n        },\n        \"targets\": (\n            \"src/assets.py\",\n            \"src/deploy.py\",\n            \"web/manifest.js\",\n        ),\n        \"edge_weight\": 0.15,\n        \"relation\": \"governs\",\n    },\n    {\n        \"node\": {\n            \"id\": \"invariant::staging_port_isolation\",\n            \"kind\": \"domain_invariant\",\n            \"weight\": 10.0,\n            \"summary\": (\n                \"Staging and headless QA servers must bind isolated loopback ports \"\n                \"(127.0.0.1) and never reuse production listener ports.\"\n            ),\n        },\n        \"targets\": (\n            \"src/server.py\",\n            \"config/ports.yaml\",\n            \"scripts/qa_runner.py\",\n        ),\n        \"edge_weight\": 0.15,\n        \"relation\": \"governs\",\n    },\n]\n\n\ndef resolve_graph_path(explicit: str | None) -> Path:\n    \"\"\"Resolve explicit graph path or pick the first existing standard location.\"\"\"\n    if explicit:\n        return Path(explicit)\n    for candidate in DEFAULT_CANDIDATES:\n        if candidate.exists():\n            return candidate\n    return DEFAULT_CANDIDATES[0]\n\n\ndef enrich(graph_path: Path) -> Dict[str, int]:\n    \"\"\"Idempotently anchor domain_invariant nodes and governing edges into graph JSON.\"\"\"\n    if not graph_path.exists():\n        raise FileNotFoundError(\n            f\"Graph file not found: '{graph_path}'. Run Phase-0 Tree-sitter indexing first.\"\n        )\n\n    data: Dict[str, Any] = json.loads(graph_path.read_text(encoding=\"utf-8\"))\n    nodes: List[Dict[str, Any]] = data.setdefault(\"nodes\", [])\n    edges: List[Dict[str, Any]] = data.setdefault(\"edges\", [])\n\n    existing_node_ids = {n.get(\"id\") for n in nodes if isinstance(n, dict)}\n    existing_edges = {\n        (e.get(\"source\"), e.get(\"target\"), e.get(\"relation\"))\n        for e in edges\n        if isinstance(e, dict)\n    }\n\n    added_nodes = 0\n    added_edges = 0\n\n    for spec in DOMAIN_INVARIANTS:\n        inv_node = spec[\"node\"]\n        inv_id = inv_node[\"id\"]\n        if inv_id not in existing_node_ids:\n            nodes.append(dict(inv_node))\n            existing_node_ids.add(inv_id)\n            added_nodes += 1\n\n        for target in spec[\"targets\"]:\n            edge_key = (inv_id, target, spec[\"relation\"])\n            if edge_key not in existing_edges:\n                edges.append(\n                    {\n                        \"source\": inv_id,\n                        \"target\": target,\n                        \"weight\": spec[\"edge_weight\"],\n                        \"relation\": spec[\"relation\"],\n                    }\n                )\n                existing_edges.add(edge_key)\n                added_edges += 1\n\n    graph_path.write_text(json.dumps(data, indent=2) + \"\\n\", encoding=\"utf-8\")\n    return {\"added_nodes\": added_nodes, \"added_edges\": added_edges}\n\n\ndef parse_args(argv: list[str] | None = None) -> argparse.Namespace:\n    parser = argparse.ArgumentParser(\n        description=\"Anchor domain_invariant nodes into .steiner/graph.json or graphify-out/graph.json.\"\n    )\n    parser.add_argument(\n        \"--graph\",\n        default=None,\n        help=\"Path to target graph.json (defaults to .steiner/graph.json or graphify-out/graph.json).\",\n    )\n    return parser.parse_args(argv)\n\n\ndef main(argv: list[str] | None = None) -> int:\n    args = parse_args(argv)\n    graph_path = resolve_graph_path(args.graph)\n    stats = enrich(graph_path)\n    print(\n        f\"[enrich_graph] Updated {graph_path}: \"\n        f\"+{stats['added_nodes']} invariant nodes, +{stats['added_edges']} edges\"\n    )\n    return 0\n\n\nif __name__ == \"__main__\":\n    raise SystemExit(main())\n"
+  },
+  "scripts/opsec_check.py": {
+    "content": "#!/usr/bin/env python3\n\"\"\"Static OPSEC leak scanner for steiner-handoff.\n\nScans tracked text files for RFC1918 IPs, local .lan hostnames, user home paths,\ncloud/git API tokens, and PEM private keys. Exits 1 on findings, 0 on pass.\n\"\"\"\n\nfrom __future__ import annotations\n\nimport re\nimport sys\nfrom pathlib import Path\n\nSKIP_DIRS = {\n    \".git\",\n    \".venv\",\n    \"venv\",\n    \"dist\",\n    \"__pycache__\",\n    \"graphify-out\",\n    \".steiner\",\n    \".steiner-hub\",\n    \"node_modules\",\n}\n\nBINARY_EXTENSIONS = {\n    \".png\",\n    \".jpg\",\n    \".jpeg\",\n    \".gif\",\n    \".webp\",\n    \".ico\",\n    \".woff\",\n    \".woff2\",\n    \".ttf\",\n    \".eot\",\n    \".pdf\",\n    \".zip\",\n    \".gz\",\n    \".pyc\",\n    \".pyo\",\n    \".so\",\n    \".dll\",\n    \".exe\",\n}\n\nPATTERNS: list[tuple[str, re.Pattern[str]]] = [\n    (\"RFC1918 192.168.x.x\", re.compile(r\"\\b192\\.168\\.\\d{1,3}\\.\\d{1,3}\\b\")),\n    (\"RFC1918 10.x.x.x\", re.compile(r\"\\b10\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\b\")),\n    (\n        \"RFC1918 172.16-31.x.x\",\n        re.compile(r\"\\b172\\.(?:1[6-9]|2\\d|3[01])\\.\\d{1,3}\\.\\d{1,3}\\b\"),\n    ),\n    (\"Local .lan hostname\", re.compile(r\"\\b[a-zA-Z0-9-]+\\.lan\\b\")),\n    (\"POSIX home path\", re.compile(r\"/home/[a-zA-Z0-9._-]+/\")),\n    (\"Windows user path\", re.compile(r\"[A-Za-z]:[/\\\\]Users[/\\\\][a-zA-Z0-9._-]+[/\\\\]\")),\n    (\"GitHub classic PAT\", re.compile(r\"\\bghp_[A-Za-z0-9]{20,}\\b\")),\n    (\"GitHub fine-grained PAT\", re.compile(r\"\\bgithub_pat_[A-Za-z0-9_]{20,}\\b\")),\n    (\"OpenAI/API sk- key\", re.compile(r\"\\bsk-[A-Za-z0-9_-]{20,}\\b\")),\n    (\"AWS Access Key ID\", re.compile(r\"\\bAKIA[0-9A-Z]{16}\\b\")),\n    (\"PEM private key\", re.compile(r\"-----BEGIN [A-Z0-9 ]*PRIVATE KEY-----\")),\n]\n\n\ndef is_binary(path: Path) -> bool:\n    if path.suffix.lower() in BINARY_EXTENSIONS:\n        return True\n    try:\n        chunk = path.read_bytes()[:2048]\n    except OSError:\n        return True\n    return b\"\\x00\" in chunk\n\n\ndef scan_repo(root: Path) -> list[tuple[Path, int, str, str]]:\n    findings: list[tuple[Path, int, str, str]] = []\n    for path in sorted(root.rglob(\"*\")):\n        if not path.is_file():\n            continue\n        if any(part in SKIP_DIRS for part in path.relative_to(root).parts):\n            continue\n        if is_binary(path):\n            continue\n        try:\n            text = path.read_text(encoding=\"utf-8\", errors=\"strict\")\n        except (OSError, UnicodeDecodeError):\n            continue\n\n        for lineno, line in enumerate(text.splitlines(), start=1):\n            for label, regex in PATTERNS:\n                match = regex.search(line)\n                if match:\n                    findings.append((path.relative_to(root), lineno, label, match.group(0)))\n    return findings\n\n\ndef main() -> int:\n    root = Path(__file__).resolve().parent.parent\n    findings = scan_repo(root)\n    if findings:\n        print(f\"OPSEC CHECK FAILED: {len(findings)} potential leak(s) found:\", file=sys.stderr)\n        for rel_path, lineno, label, sample in findings:\n            print(f\"  {rel_path}:{lineno} [{label}] -> {sample}\", file=sys.stderr)\n        return 1\n    print(\"OPSEC CHECK PASSED: 0 leaks found.\")\n    return 0\n\n\nif __name__ == \"__main__\":\n    sys.exit(main())\n"
+  },
+  "LICENSE": {
+    "content": "MIT License\n\nCopyright (c) 2026 chiminaca\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE.\n"
+  }
+};
+    // <REPO_FILES_END>
+
+    let activeRepoFile = Object.keys(REPO_FILES)[0] || null;
+    let drawerOpen = true;
+    let toastTimer = null;
+
+    const calcState = {
+      files: 5,
+      loops: 2,
+      workers: 3,
+      mcp: 12000,
+      localGpu: false
+    };
+
+    const compilerState = {
+      preset: 'antigravity',
+      target: 'full'
+    };
+
+    function escapeHtml(str) {
+      return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function highlightCodeLine(line, filepath) {
+      const escaped = escapeHtml(line);
+      const trimmed = line.trim();
+      if (trimmed.startsWith('#') || trimmed.startsWith('<!--')) {
+        return '<span class="text-[#71717a]">' + escaped + '</span>';
+      }
+      if (filepath.endsWith('.yaml')) {
+        return escaped.replace(/^(\s*)([a-zA-Z0-9_-]+:)/, '$1<span class="text-tealAccent-bright">$2</span>');
+      }
+      if (filepath.endsWith('.py')) {
+        return escaped
+          .replace(/\b(def|class|return|import|from|if|else|for|while|in|try|except|raise|with|as|and|or|not|None|True|False)\b/g, '<span class="text-[#2dd4bf]">$1</span>')
+          .replace(/(&quot;[^&]*?&quot;|"[^"]*?")/g, '<span class="text-[#a5f3fc]">$1</span>');
+      }
+      return escaped;
+    }
+
+    function toggleSourceDrawer() {
+      drawerOpen = !drawerOpen;
+      const body = document.getElementById('source-drawer-body');
+      const label = document.getElementById('drawer-toggle-label');
+      const btn = document.getElementById('drawer-toggle-btn');
+      if (body) body.classList.toggle('hidden', !drawerOpen);
+      if (label) label.textContent = drawerOpen ? 'Collapse Drawer' : 'Expand Drawer';
+      if (btn) btn.setAttribute('aria-expanded', drawerOpen ? 'true' : 'false');
+    }
+
+    function openRepoFile(filepath) {
+      if (!REPO_FILES[filepath]) return;
+      if (!drawerOpen) toggleSourceDrawer();
+      activeRepoFile = filepath;
+      const fileObj = REPO_FILES[filepath];
+      const fpEl = document.getElementById('viewer-filepath');
+      const metaEl = document.getElementById('viewer-meta');
+      const tabsEl = document.getElementById('viewer-tabs');
+      const bodyEl = document.getElementById('viewer-code-body');
+
+      const lines = fileObj.content.split('\n');
+      const bytes = new Blob([fileObj.content]).size;
+      const kb = (bytes / 1024).toFixed(2);
+
+      if (fpEl) fpEl.textContent = filepath;
+      if (metaEl) metaEl.textContent = `${lines.length} lines · ${kb} KB`;
+
+      if (tabsEl) {
+        tabsEl.innerHTML = Object.keys(REPO_FILES).map((key) => {
+          const isCurrent = key === filepath;
+          const shortName = key.split('/').pop();
+          return `<button type="button" onclick="openRepoFile('${key}')" class="px-2.5 py-1 whitespace-nowrap transition-colors ${
+            isCurrent
+              ? 'bg-tealAccent/15 text-tealAccent-bright border border-tealAccent/50 font-semibold'
+              : 'text-[#a1a1aa] hover:text-[#fafafa] border border-transparent hover:bg-[#18181b]'
+          }">${escapeHtml(shortName)}</button>`;
+        }).join('');
+      }
+
+      if (bodyEl) {
+        bodyEl.innerHTML = lines.map((line, idx) => `
+          <tr class="hover:bg-[#161b22]/60">
+            <td class="select-none text-right pr-4 pl-3 text-[#52525b] w-12 align-top tabular-nums">${idx + 1}</td>
+            <td class="pr-4 text-[#e4e4e7] whitespace-pre">${highlightCodeLine(line, filepath)}</td>
+          </tr>
+        `).join('');
+      }
+
+      const drawer = document.getElementById('source-drawer');
+      if (drawer && document.activeElement && document.activeElement.tagName === 'BUTTON' && document.activeElement.closest('footer')) {
+        drawer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    function copyActiveRepoFile() {
+      if (!activeRepoFile || !REPO_FILES[activeRepoFile]) return;
+      copyText(REPO_FILES[activeRepoFile].content, `Copied ${activeRepoFile}`);
+    }
+
+    function formatNum(n) {
+      return Math.round(n).toLocaleString('en-US');
+    }
+
+    function computeQuotaMetrics(state) {
+      const files = Number(state.files);
+      const loops = Number(state.loops);
+      const workers = Number(state.workers);
+      const mcp = Number(state.mcp);
+      const localGpu = Boolean(state.localGpu);
+
+      const turnsMcp = Math.round(6 + files * 2.4 + loops * 4);
+      const idleMcp = turnsMcp * mcp;
+      const exploreMcp = files * 57000;
+      const refactorMcp = loops * 107500 * (0.6 + 0.08 * files);
+      const execMcp = workers * 16000;
+      const tokMcp = Math.round(idleMcp + exploreMcp + refactorMcp + execMcp);
+
+      const fileScale = 0.8 + 0.04 * files;
+      const tokDump = Math.round((workers * 95000 + loops * 95000 + workers * 15000) * fileScale);
+      const tokMap = Math.round(files * 23000 + loops * 49000 * (0.75 + 0.05 * files) + workers * 14000);
+
+      let tokSteiner = 0;
+      let gateBadge = '';
+
+      if (files < 3) {
+        if (localGpu) {
+          tokSteiner = 0;
+          gateBadge = 'LOCAL GPU OFFLOAD · 0% CLOUD';
+        } else {
+          tokSteiner = 3500 + loops * 3500 + 11000;
+          gateBadge = 'ANTI-SWARM GATE · 1 DIRECT BATCH';
+        }
+      } else {
+        const effectiveSlices = Math.min(workers, Math.max(1, Math.ceil(files / 2)));
+        const initCtx = effectiveSlices * 3500;
+        const refactorCtx = localGpu ? 0 : loops * 5750;
+        const execSys = 10000 + effectiveSlices * 8000;
+        tokSteiner = Math.round(initCtx + refactorCtx + execSys);
+        gateBadge = localGpu
+          ? `LEAN SWARM (${effectiveSlices} SLICES) + GPU REFACTORS`
+          : `LEAN SWARM MODE (${effectiveSlices} SLICES)`;
+      }
+
+      const maxRef = Math.max(tokMcp, tokDump, tokMap, tokSteiner, 1);
+      const pctSaved = tokMcp > 0 ? ((tokMcp - tokSteiner) / tokMcp) * 100 : 0;
+
+      return {
+        tokMcp,
+        tokDump,
+        tokMap,
+        tokSteiner,
+        gateBadge,
+        pctSaved,
+        barMcp: (tokMcp / maxRef) * 100,
+        barDump: (tokDump / maxRef) * 100,
+        barMap: (tokMap / maxRef) * 100,
+        barSteiner: (tokSteiner / maxRef) * 100
+      };
+    }
+
+    function renderCalculator() {
+      const m = computeQuotaMetrics(calcState);
+      document.querySelectorAll('[data-calc-slider="files"]').forEach((el) => { el.value = calcState.files; });
+      document.querySelectorAll('[data-calc-slider="loops"]').forEach((el) => { el.value = calcState.loops; });
+      document.querySelectorAll('[data-calc-slider="workers"]').forEach((el) => { el.value = calcState.workers; });
+      document.querySelectorAll('[data-calc-gpu]').forEach((el) => { el.checked = calcState.localGpu; });
+
+      const setOut = (key, text) => {
+        document.querySelectorAll(`[data-calc-out="${key}"]`).forEach((el) => { el.textContent = text; });
+      };
+      setOut('files', String(calcState.files));
+      setOut('loops', String(calcState.loops));
+      setOut('workers', String(calcState.workers));
+      setOut('mcpLabel', calcState.mcp === 0 ? '0 tok' : `${calcState.mcp / 1000}k tok`);
+      setOut('pctSaved', `-${m.pctSaved.toFixed(1)}%`);
+      setOut('gateBadge', m.gateBadge);
+      setOut('tokMcp', `${formatNum(m.tokMcp)} tok`);
+      setOut('tokDump', `${formatNum(m.tokDump)} tok`);
+      setOut('tokMap', `${formatNum(m.tokMap)} tok`);
+      setOut('tokSteiner', `${formatNum(m.tokSteiner)} tok`);
+
+      const setBar = (key, pct) => {
+        document.querySelectorAll(`[data-calc-bar="${key}"]`).forEach((el) => {
+          el.style.width = `${Math.max(0, Math.min(100, pct)).toFixed(1)}%`;
+        });
+      };
+      setBar('mcp', m.barMcp);
+      setBar('dump', m.barDump);
+      setBar('map', m.barMap);
+      setBar('steiner', m.barSteiner);
+
+      document.querySelectorAll('[data-mcp-btn]').forEach((btn) => {
+        const val = Number(btn.getAttribute('data-mcp-btn'));
+        const active = val === calcState.mcp;
+        btn.className = active
+          ? 'py-1.5 border border-tealAccent bg-tealAccent/15 text-tealAccent-bright font-semibold transition-colors'
+          : 'py-1.5 border border-[#27272a] bg-obsidian text-[#a1a1aa] hover:text-[#fafafa] transition-colors';
+      });
+    }
+
+    function updateCalculator(field, value) {
+      if (field === 'localGpu') {
+        calcState.localGpu = Boolean(value);
+      } else {
+        calcState[field] = Number(value);
+      }
+      renderCalculator();
+    }
+
+    function resetCalculator() {
+      calcState.files = 5;
+      calcState.loops = 2;
+      calcState.workers = 3;
+      calcState.mcp = 12000;
+      calcState.localGpu = false;
+      renderCalculator();
+      showToast('Reset simulator to 5-file benchmark baseline');
+    }
+
+    function setSteinerMode(mode) {
+      const isSteiner = mode !== 'naive';
+      document.querySelectorAll('[data-steiner-btn]').forEach((btn) => {
+        const btnMode = btn.getAttribute('data-steiner-btn');
+        const active = (isSteiner && btnMode === 'steiner') || (!isSteiner && btnMode === 'naive');
+        if (active) {
+          btn.className = btnMode === 'steiner'
+            ? 'px-2.5 py-1 rounded bg-tealAccent/20 text-tealAccent-bright border border-tealAccent/50 font-semibold transition-colors'
+            : 'px-2.5 py-1 rounded bg-[#ef4444]/15 text-coralWarn border border-coralWarn/50 font-semibold transition-colors';
+        } else {
+          btn.className = 'px-2.5 py-1 rounded text-gh-muted hover:text-gh-text border border-transparent transition-colors';
+        }
+      });
+
+      document.querySelectorAll('[data-steiner-status]').forEach((el) => {
+        if (isSteiner) {
+          el.textContent = 'ACTIVE: Hub-Penalized Kou Steiner (α = 1.4) — core/utils.py (deg=42) bypassed';
+          el.className = 'text-tealAccent-bright font-medium';
+        } else {
+          el.textContent = 'ACTIVE: Naive Shortest Path (α = 0.0) — gravity well core/utils.py pulls 6 unrelated modules';
+          el.className = 'text-coralWarn font-medium';
+        }
+      });
+
+      document.querySelectorAll('[data-steiner-nodes]').forEach((el) => {
+        el.textContent = isSteiner ? '5 / 14' : '11 / 14';
+      });
+
+      document.querySelectorAll('[data-steiner-tokens]').forEach((el) => {
+        el.textContent = isSteiner ? '3,420 tok' : '28,410 tok';
+        el.className = isSteiner ? 'text-tealAccent-bright' : 'text-coralWarn';
+      });
+
+      document.querySelectorAll('[data-graph-layer="naive-noise"]').forEach((el) => {
+        el.setAttribute('opacity', isSteiner ? '0.20' : '1');
+      });
+      document.querySelectorAll('[data-graph-layer="naive-edges"]').forEach((el) => {
+        el.setAttribute('opacity', isSteiner ? '0.12' : '1');
+      });
+      document.querySelectorAll('[data-graph-layer="steiner-edges"]').forEach((el) => {
+        el.setAttribute('opacity', isSteiner ? '1' : '0.15');
+      });
+      document.querySelectorAll('[data-graph-layer="steiner-nodes"]').forEach((el) => {
+        el.setAttribute('opacity', isSteiner ? '1' : '0.25');
+      });
+      document.querySelectorAll('[data-graph-hub-ring]').forEach((el) => {
+        el.setAttribute('stroke', isSteiner ? '#3f3f46' : '#f87171');
+        el.setAttribute('stroke-dasharray', isSteiner ? '4 3' : 'none');
+      });
+    }
+
+    const PRESET_MAP = {
+      antigravity: {
+        name: 'Antigravity CLI',
+        coordinator: 'gemini-pro-architect',
+        worker: 'gemini-flash-coder',
+        invoke: 'agy run --slice'
+      },
+      'claude-code': {
+        name: 'Claude Code',
+        coordinator: 'claude-sonnet-lead',
+        worker: 'claude-haiku-worker',
+        invoke: 'claude -p --allowedTools Edit,Bash'
+      },
+      aider: {
+        name: 'Aider CLI',
+        coordinator: 'architect-model',
+        worker: 'editor-model',
+        invoke: 'aider --no-auto-commits --read pack.xml'
+      }
+    };
+
+    function setCompilerPreset(preset) {
+      compilerState.preset = preset;
+      document.querySelectorAll('[data-compiler-preset]').forEach((btn) => {
+        const active = btn.getAttribute('data-compiler-preset') === preset;
+        btn.className = active
+          ? 'py-2 px-2 border border-tealAccent bg-tealAccent/15 text-tealAccent-bright font-semibold transition-colors'
+          : 'py-2 px-2 border border-[#27272a] bg-obsidian text-[#a1a1aa] hover:text-[#fafafa] transition-colors';
+      });
+      updateCompilerDemo();
+    }
+
+    function setCompilerTarget(target) {
+      compilerState.target = target;
+      document.querySelectorAll('[data-compiler-target]').forEach((btn) => {
+        const active = btn.getAttribute('data-compiler-target') === target;
+        btn.className = active
+          ? 'py-2 px-2.5 border border-tealAccent bg-tealAccent/15 text-tealAccent-bright font-semibold truncate transition-colors'
+          : 'py-2 px-2.5 border border-[#27272a] bg-obsidian text-[#a1a1aa] hover:text-[#fafafa] truncate transition-colors';
+      });
+      updateCompilerDemo();
+    }
+
+    function updateCompilerDemo() {
+      const gpuChecked = document.getElementById('compiler-opt-gpu')?.checked ?? true;
+      const privacyChecked = document.getElementById('compiler-opt-privacy')?.checked ?? true;
+      const preset = PRESET_MAP[compilerState.preset] || PRESET_MAP.antigravity;
+      const isCompact = compilerState.target === 'compact';
+
+      const yamlText = `preset: "${compilerState.preset}"
+hub:
+  endpoint: "http://127.0.0.1:8088"
+  max_pack_tokens: 3500
+  hub_penalty_alpha: 1.4
+local_gpu_offload:
+  enabled: ${gpuChecked ? 'true' : 'false'}
+  endpoint: "http://127.0.0.1:11434"
+  model: "qwen2.5-coder:14b"
+privacy_firewall:
+  tier1_isolation: ${privacyChecked ? 'true' : 'false'}
+  patterns: ["**/finance/**", "**/legal/**"]
+roles:
+  coordinator: "${preset.coordinator}"
+  worker: "${preset.worker}"`;
+
+      const fullPrompt = `# STEINER-HANDOFF :: WEBCHAT AUDITOR (${preset.name})
+Role: Architecture Auditor & Zero-Exploration Handoff Compiler
+
+## 1. Phase-0 Deterministic Pre-Pack (Mandatory)
+- Never emit exploratory grep/find loops for subagents.
+- Trigger \`POST http://127.0.0.1:8088/api/index\` (Tree-sitter --code-only, 0% cloud quota).
+- Fetch minimal ~3,500-token \`<xml_pack>\` via \`POST /api/context/pack\` with explicit seeds.
+
+## 2. Calibrated Execution Routing (${preset.name})
+- Coordinator: \`${preset.coordinator}\` | Slice Worker: \`${preset.worker}\`
+- Invocation: \`${preset.invoke}\`
+- Anti-Swarm Gate: Tasks touching < 3 files or < 40 LOC MUST bypass swarm spawning.${
+  gpuChecked
+    ? '\n- Local GPU Offload: Route < 3-file patches & follow-up refactors to Ollama (http://127.0.0.1:11434, 0% cloud quota).'
+    : '\n- Local GPU Offload: Disabled (execute < 3-file patches as single direct coordinator batch).'
+}${
+  privacyChecked
+    ? '\n\n## 3. Tier-1 Privacy Firewall (Enforced)\n- Repositories matching **/finance/** or **/legal/** MUST stay isolated from global-graph.json.\n- Cloud subagent egress is strictly forbidden on Tier-1 targets.'
+    : '\n\n## 3. Privacy Mode\n- Standard workspace indexing enabled (Tier-1 pattern firewall disabled).'
+}
+
+## 4. Verification & Drift Sync
+- Run 1 deterministic headless QA pass, then call \`POST /api/refresh/{project_id}\`.`;
+
+      const compactPrompt = `[STEINER-HANDOFF BOOSTER · ${preset.name}]
+1. PHASE-0: POST :8088/api/index -> POST :8088/api/context/pack (cap 3,500 tok, alpha=1.4).
+2. ZERO PULL: Inject <xml_pack> directly into disjoint slices (${preset.worker}); forbid grep/find loops.
+3. GATE: <3 files -> ${gpuChecked ? 'Ollama local GPU (0% quota)' : 'single direct batch'}.${
+  privacyChecked ? '\n4. PRIVACY: Tier-1 repos isolated from global-graph.json; local inference only.' : ''
+}
+${privacyChecked ? '5' : '4'}. SYNC: 1-pass headless QA + POST :8088/api/refresh/{project_id}.`;
+
+      const compiled = isCompact ? compactPrompt : fullPrompt;
+      const estTokens = Math.round(compiled.length / 4);
+
+      const yamlEl = document.getElementById('compiler-yaml-preview');
+      const mdEl = document.getElementById('compiler-md-preview');
+      const fnEl = document.getElementById('compiler-output-filename');
+      const tokEl = document.getElementById('compiler-token-count');
+
+      if (yamlEl) yamlEl.textContent = yamlText;
+      if (mdEl) mdEl.textContent = compiled;
+      if (fnEl) fnEl.textContent = isCompact ? 'dist/WEBCHAT_COMPACT_BOOSTER.md' : 'dist/WEBCHAT_SYSTEM_PROMPT.md';
+      if (tokEl) tokEl.textContent = `~${estTokens} tok`;
+    }
+
+    function copyCompiledPrompt() {
+      const mdEl = document.getElementById('compiler-md-preview');
+      if (mdEl) copyText(mdEl.textContent, 'Copied compiled handoff prompt');
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      const msgEl = document.getElementById('toast-message');
+      if (!toast || !msgEl) return;
+      msgEl.textContent = message;
+      toast.classList.remove('opacity-0', 'translate-y-2');
+      toast.classList.add('opacity-100', 'translate-y-0');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        toast.classList.remove('opacity-100', 'translate-y-0');
+      }, 2400);
+    }
+
+    function copyText(text, successMsg) {
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        const ok = document.execCommand('copy');
+        document.body.removeChild(ta);
+        if (ok) {
+          showToast(successMsg || 'Copied to clipboard');
+          return;
+        }
+      } catch (err) {}
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text)
+          .then(() => showToast(successMsg || 'Copied to clipboard'))
+          .catch(() => showToast('Copy unavailable in this browser context'));
+      } else {
+        showToast('Copy unavailable in this browser context');
+      }
+    }
+
+    function renderAllMath(attempts = 0) {
+      if (typeof window.katex === 'undefined') {
+        if (attempts < 25) setTimeout(() => renderAllMath(attempts + 1), 120);
+        return;
+      }
+      const el = document.getElementById('math-steiner-eq-pages');
+      if (el) {
+        window.katex.render(
+          String.raw`w'(u, v) = w(u, v) \cdot \left(1 + \alpha \ln(1 + \deg(v))\right)`,
+          el,
+          { displayMode: true, throwOnError: false }
+        );
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (activeRepoFile) openRepoFile(activeRepoFile);
+      renderCalculator();
+      setSteinerMode('steiner');
+      updateCompilerDemo();
+      renderAllMath();
+    });
+  </script>
+</body>
+</html>

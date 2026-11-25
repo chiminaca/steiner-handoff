@@ -1,0 +1,17 @@
+# Reusable Phase-0 Tree-sitter ignore template for steiner-handoff.
+# Copy to .graphifyignore in your repository root before running --code-only indexing.
+node_modules/
+dist/
+build/
+vendor/
+.venv/
+target/
+uploads/
+exports/
+graphify-out/
+.git/
+*.min.js
+*.graph.json
+*.png
+topology.yaml
+presets/*.local.yaml

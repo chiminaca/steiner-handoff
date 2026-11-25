@@ -1,0 +1,23 @@
+# Private local topology & presets
+topology.yaml
+presets/*.local.yaml
+
+# Compiled prompt artifacts
+dist/
+
+# Local AST graphs & caches
+*.graph.json
+graphify-out/
+.steiner/
+.steiner-hub/
+
+# Environment & secrets
+.env
+.env.*
+
+# Python & Node tooling
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+node_modules/

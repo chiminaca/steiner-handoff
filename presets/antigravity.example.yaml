@@ -1,0 +1,21 @@
+# Neutral agent role & invocation preset for Antigravity CLI
+# Pass via: python3 compiler/build_prompt.py --preset presets/antigravity.example.yaml
+
+preset_name: "antigravity-cli"
+provider: "antigravity"
+
+agent_roles:
+  coordinator: "gemini-pro-architect"
+  worker_slice: "gemini-flash-coder"
+  auditor: "reasoning-auditor"
+  headless_qa: "local-runner"
+
+invocation:
+  cli_binary: "agy"
+  slice_command: "agy run --slice"
+  verify_command: "agy run --verify"
+
+handoff_defaults:
+  require_xml_pack: true
+  enforce_disjoint_slices: true
+  parallel_workers_max: 4

@@ -1,0 +1,21 @@
+# Neutral agent role & invocation preset for Claude Code CLI
+# Pass via: python3 compiler/build_prompt.py --preset presets/claude-code.example.yaml
+
+preset_name: "claude-code"
+provider: "claude-code"
+
+agent_roles:
+  coordinator: "claude-sonnet-lead"
+  worker_slice: "claude-haiku-worker"
+  auditor: "claude-sonnet-lead"
+  headless_qa: "local-runner"
+
+invocation:
+  cli_binary: "claude"
+  slice_command: "claude -p --allowedTools Edit,Bash"
+  verify_command: "claude -p --allowedTools Bash"
+
+handoff_defaults:
+  require_xml_pack: true
+  enforce_disjoint_slices: true
+  parallel_workers_max: 3

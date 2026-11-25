@@ -1,0 +1,26 @@
+# Neutral hybrid preset combining Aider architect/editor roles with local Ollama GPU fallback
+# Pass via: python3 compiler/build_prompt.py --preset presets/aider-hybrid.example.yaml
+
+preset_name: "aider-hybrid"
+provider: "aider"
+
+agent_roles:
+  coordinator: "architect-model"
+  worker_slice: "editor-model"
+  auditor: "reasoning-auditor"
+  headless_qa: "qwen2.5-coder:14b"
+
+local_inference:
+  enabled: true
+  provider: "ollama"
+  model: "qwen2.5-coder:14b"
+
+invocation:
+  cli_binary: "aider"
+  slice_command: "aider --no-auto-commits --read pack.xml"
+  verify_command: "aider --no-auto-commits --test"
+
+handoff_defaults:
+  require_xml_pack: true
+  enforce_disjoint_slices: true
+  parallel_workers_max: 2

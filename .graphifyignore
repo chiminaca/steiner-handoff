@@ -1,0 +1,15 @@
+node_modules/
+dist/
+build/
+vendor/
+.venv/
+target/
+uploads/
+exports/
+graphify-out/
+.git/
+*.min.js
+*.graph.json
+*.png
+topology.yaml
+presets/*.local.yaml

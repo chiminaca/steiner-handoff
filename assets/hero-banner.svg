@@ -1,0 +1,102 @@
+<svg width="1120" height="340" viewBox="0 0 1120 340" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="steiner-handoff: Zero-Exploration Context Packing and Topology-Aware Prompt Compilation">
+  <defs>
+    <pattern id="hero-matrix" width="24" height="24" patternUnits="userSpaceOnUse">
+      <path d="M 24 0 L 0 0 0 24" fill="none" stroke="rgba(255,255,255,0.035)" stroke-width="1" shape-rendering="crispEdges"/>
+    </pattern>
+  </defs>
+
+  <!-- Outer Frame -->
+  <rect x="0.5" y="0.5" width="1119" height="339" fill="#0b0b0e" stroke="#27272a" stroke-width="1"/>
+  <rect x="1" y="1" width="1118" height="338" fill="url(#hero-matrix)"/>
+
+  <!-- 4 CAD Corner Registration Ticks -->
+  <path d="M 0 8 L 0 0 L 8 0" stroke="#52525b" stroke-width="1.5"/>
+  <path d="M 1112 0 L 1120 0 L 1120 8" stroke="#52525b" stroke-width="1.5"/>
+  <path d="M 0 332 L 0 340 L 8 340" stroke="#52525b" stroke-width="1.5"/>
+  <path d="M 1112 340 L 1120 340 L 1120 332" stroke="#52525b" stroke-width="1.5"/>
+
+  <!-- Left Column -->
+  <text x="44" y="54" fill="#a1a1aa" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11.5" font-weight="500" letter-spacing="1.6">
+    TREE-SITTER AST <tspan fill="#14b8a6">&#183;</tspan> KOU STEINER <tspan fill="#14b8a6">&#183;</tspan> ZERO MCP
+  </text>
+
+  <!-- 48x48 Geometric Steiner Emblem -->
+  <g transform="translate(44, 78)">
+    <rect x="1.5" y="1.5" width="45" height="45" rx="4" fill="#09090b" stroke="#27272a" stroke-width="1.5"/>
+    <path d="M10 11 L24 24 M38 11 L24 24 M10 37 L24 24 M38 37 L24 24 M24 6 L24 42 M6 24 L42 24" stroke="#27272a" stroke-width="1"/>
+    <circle cx="24" cy="24" r="6" fill="#09090b" stroke="#52525b" stroke-width="1.2" stroke-dasharray="2.5 2"/>
+    <circle cx="24" cy="24" r="2" fill="#52525b"/>
+    <path d="M10 11 L17 17 L31 17 L38 11 M17 17 L17 31 L10 37 M31 17 L31 31 L38 37" stroke="#14b8a6" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"/>
+    <circle cx="17" cy="17" r="2" fill="#14b8a6"/>
+    <circle cx="31" cy="17" r="2" fill="#14b8a6"/>
+    <circle cx="17" cy="31" r="2" fill="#14b8a6"/>
+    <circle cx="31" cy="31" r="2" fill="#14b8a6"/>
+    <rect x="7" y="8" width="6" height="6" fill="#fafafa" stroke="#09090b" stroke-width="1"/>
+    <rect x="35" y="8" width="6" height="6" fill="#fafafa" stroke="#09090b" stroke-width="1"/>
+    <rect x="7" y="34" width="6" height="6" fill="#fafafa" stroke="#09090b" stroke-width="1"/>
+    <rect x="35" y="34" width="6" height="6" fill="#fafafa" stroke="#09090b" stroke-width="1"/>
+  </g>
+
+  <text x="108" y="116" fill="#fafafa" font-family="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="44" font-weight="800" letter-spacing="-1.6">
+    steiner-handoff
+  </text>
+
+  <text x="44" y="164" fill="#d4d4d8" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="16" font-weight="400">
+    Zero-Exploration Context Packing &amp;
+  </text>
+  <text x="44" y="188" fill="#d4d4d8" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="16" font-weight="400">
+    Topology-Aware Prompt Compilation for Coding Agents
+  </text>
+
+  <!-- 3 Sharp 1px-Bordered Monospace Pills -->
+  <rect x="44" y="254" width="142" height="34" fill="#09090b" stroke="#3f3f46" stroke-width="1"/>
+  <text x="115" y="275" text-anchor="middle" fill="#e4e4e7" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11.5" letter-spacing="0.6">
+    <tspan fill="#2dd4bf" font-weight="700">0%</tspan> INDEX QUOTA
+  </text>
+
+  <rect x="196" y="254" width="124" height="34" fill="#09090b" stroke="#3f3f46" stroke-width="1"/>
+  <text x="258" y="275" text-anchor="middle" fill="#e4e4e7" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11.5" letter-spacing="0.6">
+    <tspan fill="#2dd4bf" font-weight="700">~38ms</tspan> PACK
+  </text>
+
+  <rect x="330" y="254" width="124" height="34" fill="#09090b" stroke="#3f3f46" stroke-width="1"/>
+  <text x="392" y="275" text-anchor="middle" fill="#e4e4e7" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11.5" letter-spacing="0.6">
+    <tspan fill="#2dd4bf" font-weight="700">0</tspan> IDLE MCP
+  </text>
+
+  <!-- 1px Vertical Divider -->
+  <line x1="616" y1="0" x2="616" y2="340" stroke="#27272a" stroke-width="1"/>
+
+  <!-- Right Column -->
+  <text x="656" y="108" fill="#14b8a6" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="68" font-weight="700" letter-spacing="-2">
+    -93.5%
+  </text>
+  <text x="656" y="134" fill="#a1a1aa" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" font-weight="600" letter-spacing="1.4">
+    CLOUD INPUT TOKENS
+  </text>
+
+  <!-- Bar 1: Pull Swarm + MCP (860k tok = 100%) -->
+  <text x="656" y="176" fill="#a1a1aa" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12">
+    Pull Swarm + MCP
+  </text>
+  <text x="1076" y="176" text-anchor="end" fill="#f87171" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" font-weight="600">
+    860k tok
+  </text>
+  <rect x="656" y="186" width="420" height="14" fill="#18181b" stroke="#27272a" stroke-width="1"/>
+  <rect x="657" y="187" width="418" height="12" fill="#ef4444" fill-opacity="0.65"/>
+
+  <!-- Bar 2: Steiner Push (56k tok = 6.51%) -->
+  <text x="656" y="230" fill="#fafafa" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" font-weight="600">
+    Steiner Push (6.5%)
+  </text>
+  <text x="1076" y="230" text-anchor="end" fill="#2dd4bf" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" font-weight="700">
+    56k tok
+  </text>
+  <rect x="656" y="240" width="420" height="14" fill="#18181b" stroke="#27272a" stroke-width="1"/>
+  <rect x="657" y="241" width="27.2" height="12" fill="#14b8a6"/>
+
+  <!-- Bottom Benchmark Footnote -->
+  <text x="656" y="286" fill="#71717a" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11">
+    5-file task &#183; 2 refactor loops &#183; 3 workers &#183; 12k MCP schema
+  </text>
+</svg>

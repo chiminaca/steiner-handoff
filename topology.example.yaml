@@ -1,0 +1,48 @@
+# steiner-handoff :: Neutral Infrastructure & Model Role Topology (SSOT)
+# Copy this file to topology.yaml (gitignored) before running compiler/build_prompt.py.
+# Never commit local RFC-1918 IPs, hostnames, credentials, or private repository slugs.
+
+version: "1.0"
+workspace_root: "/srv/workspaces"
+
+hub:
+  host: "127.0.0.1"
+  port: 8088
+  max_pack_tokens: 3500
+  hub_penalty_alpha: 1.4
+  pagerank_damping: 0.85
+  # Optional remote hub / secondary node example (RFC-5737 documentation IP):
+  # secondary_node:
+  #   host: "192.0.2.10"
+  #   port: 8088
+
+local_inference:
+  enabled: true
+  provider: "ollama"
+  endpoint: "http://127.0.0.1:11434"
+  # Optional remote GPU inference node example (RFC-5737 documentation IP):
+  # endpoint: "http://192.0.2.10:11434"
+  model: "qwen2.5-coder:14b"
+  anti_swarm_max_files: 2
+  anti_swarm_max_loc: 40
+
+privacy_firewall:
+  enforce_physical_isolation: true
+  forbid_global_mesh_merge: true
+  tier1_private_patterns:
+    - "**/finance-ledger/**"
+    - "**/legal-contracts/**"
+    - "**/.secrets/**"
+
+agent_roles:
+  coordinator: "frontier-architect"
+  worker_slice: "fast-coder"
+  auditor: "reasoning-auditor"
+  headless_qa: "local-runner"
+
+verification:
+  mode: "single_pass_headless"
+  require_syntax_check: true
+  require_graph_refresh: true
+  refresh_endpoint_template: "/api/refresh/{project_id}"
+  opsec_scan_script: "scripts/opsec_check.py"
