@@ -107,7 +107,7 @@ python3 -m venv .venv
 source .venv/bin/activate
 pip install -r hub/requirements.txt
 
-# 1. Create your private topology (gitignored) from the sanitized example
+# 1. Create your private topology (gitignored) from the reference template
 cp topology.example.yaml topology.yaml
 
 # 2. Compile your webchat auditor & booster prompts into dist/
@@ -158,14 +158,14 @@ Repositories matching sensitive path patterns (e.g., `**/finance/**`, `**/legal/
 
 ```text
 steiner-handoff/
-├── assets/                   # Standalone Swiss-CAD SVGs (hero, architecture, steiner-pruning, logo)
+├── assets/                   # Vector architecture, Steiner-pruning, hero & emblem SVGs
 ├── bootstrap/                # Graph invariant enrichment templates
 ├── compiler/                 # Declarative topology.yaml -> dist/ prompt compiler
-├── docs/                     # Standalone GitHub Pages microsite (no CDN Tailwind, no FOUC)
+├── docs/                     # Interactive GitHub Pages microsite (quota simulator & compiler sandbox)
 ├── hub/                      # FastAPI AST indexer, Kou Steiner packer & Tier-1 privacy guard
 ├── presets/                  # Target agent presets (Antigravity, Claude Code, Aider)
 ├── scripts/                  # Static OPSEC scanner, OG social preview & docs source sync
-├── topology.example.yaml     # Sanitized reference topology
+├── topology.example.yaml     # Declarative infrastructure, privacy & model-role template
 └── LICENSE                   # MIT License
 ```
 
