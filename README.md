@@ -88,7 +88,7 @@ $$w'(u, v) = w(u, v) \cdot \left(1 + \alpha \ln(1 + \deg(v))\right)$$
 With $\alpha = 1.4$, paths through `core/utils.py` become expensive, forcing the packer to route across **semantic bridges** (`order_schema.py`, explicit architectural invariants from `enrich_graph.py`) connecting only the exact terminal seed files.
 
 <p align="center">
-  <img src="./assets/steiner-pruning.svg" alt="Hub-Penalized Kou Steiner Pruning vs Naive Shortest Path" width="100%" />
+  <a href="https://chiminaca.github.io/steiner-handoff/#pages-steiner-viz"><img src="./assets/steiner-pruning.svg" alt="Hub-Penalized Kou Steiner Pruning vs Naive Shortest Path" width="100%" /></a>
 </p>
 
 ---
