@@ -1,5 +1,9 @@
 <p align="center">
-  <img src="./assets/hero-banner.svg" alt="steiner-handoff: Zero-Exploration Context Packing & Topology-Aware Prompt Compilation" width="100%" />
+  <picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./assets/hero-banner.svg">
+  <source media="(prefers-color-scheme: light)" srcset="./assets/hero-banner-light.svg">
+  <img alt="steiner-handoff — -93.5% Cloud Input Tokens" src="./assets/hero-banner.svg" width="100%">
+</picture>
 </p>
 
 <p align="center">

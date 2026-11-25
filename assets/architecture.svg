@@ -1,5 +1,5 @@
 <svg width="980" height="310" viewBox="0 0 980 310" fill="none" xmlns="http://www.w3.org/2000/svg" role="img">
-  <rect x="0.5" y="0.5" width="979" height="309" rx="6" fill="#09090b" stroke="#30363d"/>
+  <rect x="0.5" y="0.5" width="979" height="309" rx="6" fill="#0d1117" stroke="#30363d"/>
                     <defs>
                       <marker id="arrow-teal" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
                         <path d="M 1 1.5 L 8.5 5 L 1 8.5" fill="none" stroke="#14b8a6" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
@@ -11,44 +11,44 @@
 
                     <!-- STAGE 1 GROUP -->
                     <rect x="12" y="14" width="256" height="282" rx="4" fill="#0d1117" stroke="#30363d" stroke-width="1"/>
-                    <text x="26" y="37" fill="#a1a1aa" font-family="JetBrains Mono, monospace" font-size="10.5" font-weight="700" letter-spacing="0.08em">1. DECLARATIVE COMPILER</text>
+                    <text x="26" y="37" fill="#a1a1aa" font-family="ui-monospace, SFMono-Regular, Cascadia Mono, Segoe UI Mono, Menlo, Consolas, Liberation Mono, monospace" font-size="10.5" font-weight="700" letter-spacing="0.08em">1. DECLARATIVE COMPILER</text>
                     <line x1="12" y1="48" x2="268" y2="48" stroke="#21262d" stroke-width="1"/>
 
                     <rect x="28" y="66" width="224" height="54" rx="3" fill="#161b22" stroke="#30363d"/>
-                    <text x="42" y="88" fill="#e6edf3" font-family="JetBrains Mono, monospace" font-size="12" font-weight="600">topology.yaml</text>
-                    <text x="42" y="106" fill="#8b949e" font-family="Inter, sans-serif" font-size="11">Private SSOT (gitignored)</text>
+                    <text x="42" y="88" fill="#e6edf3" font-family="ui-monospace, SFMono-Regular, Cascadia Mono, Segoe UI Mono, Menlo, Consolas, Liberation Mono, monospace" font-size="12" font-weight="600">topology.yaml</text>
+                    <text x="42" y="106" fill="#8b949e" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Noto Sans, Helvetica, Arial, sans-serif" font-size="11">Private SSOT (gitignored)</text>
 
                     <line x1="140" y1="120" x2="140" y2="145" stroke="#8b949e" stroke-width="1.4" marker-end="url(#arrow-muted)"/>
 
                     <rect x="28" y="149" width="224" height="44" rx="3" fill="#161b22" stroke="#30363d"/>
-                    <text x="42" y="175" fill="#2dd4bf" font-family="JetBrains Mono, monospace" font-size="11.5" font-weight="500">compiler/build_prompt.py</text>
+                    <text x="42" y="175" fill="#2dd4bf" font-family="ui-monospace, SFMono-Regular, Cascadia Mono, Segoe UI Mono, Menlo, Consolas, Liberation Mono, monospace" font-size="11.5" font-weight="500">compiler/build_prompt.py</text>
 
                     <line x1="140" y1="193" x2="140" y2="218" stroke="#14b8a6" stroke-width="1.4" marker-end="url(#arrow-teal)"/>
 
                     <rect x="28" y="222" width="224" height="58" rx="3" fill="#0b1312" stroke="#14b8a6" stroke-width="1.2"/>
-                    <text x="42" y="244" fill="#fafafa" font-family="Inter, sans-serif" font-size="12" font-weight="600">Webchat Auditor Prompt</text>
-                    <text x="42" y="263" fill="#a1a1aa" font-family="JetBrains Mono, monospace" font-size="10.5">Premise Audit + Handoff Block</text>
+                    <text x="42" y="244" fill="#fafafa" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Noto Sans, Helvetica, Arial, sans-serif" font-size="12" font-weight="600">Webchat Auditor Prompt</text>
+                    <text x="42" y="263" fill="#a1a1aa" font-family="ui-monospace, SFMono-Regular, Cascadia Mono, Segoe UI Mono, Menlo, Consolas, Liberation Mono, monospace" font-size="10.5">Premise Audit + Handoff Block</text>
 
                     <!-- CONNECTOR STAGE 1 -> STAGE 2 -->
                     <path d="M 252 251 L 285 251 L 285 104 L 316 104" stroke="#14b8a6" stroke-width="1.5" marker-end="url(#arrow-teal)"/>
 
                     <!-- STAGE 2 GROUP -->
                     <rect x="302" y="14" width="290" height="282" rx="4" fill="#0d1117" stroke="#30363d" stroke-width="1"/>
-                    <text x="316" y="37" fill="#2dd4bf" font-family="JetBrains Mono, monospace" font-size="10.5" font-weight="700" letter-spacing="0.08em">2. PHASE-0 STEINER HUB (0% QUOTA)</text>
+                    <text x="316" y="37" fill="#2dd4bf" font-family="ui-monospace, SFMono-Regular, Cascadia Mono, Segoe UI Mono, Menlo, Consolas, Liberation Mono, monospace" font-size="10.5" font-weight="700" letter-spacing="0.08em">2. PHASE-0 STEINER HUB (0% QUOTA)</text>
                     <line x1="302" y1="48" x2="592" y2="48" stroke="#21262d" stroke-width="1"/>
 
                     <rect x="320" y="70" width="254" height="72" rx="3" fill="#161b22" stroke="#30363d"/>
-                    <text x="334" y="92" fill="#e6edf3" font-family="JetBrains Mono, monospace" font-size="11.5" font-weight="600">POST /api/index (:8088)</text>
-                    <text x="334" y="111" fill="#8b949e" font-family="Inter, sans-serif" font-size="11">.graphifyignore + enrich_graph.py</text>
-                    <text x="334" y="128" fill="#2dd4bf" font-family="JetBrains Mono, monospace" font-size="10.5">Tree-sitter --code-only (Local)</text>
+                    <text x="334" y="92" fill="#e6edf3" font-family="ui-monospace, SFMono-Regular, Cascadia Mono, Segoe UI Mono, Menlo, Consolas, Liberation Mono, monospace" font-size="11.5" font-weight="600">POST /api/index (:8088)</text>
+                    <text x="334" y="111" fill="#8b949e" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Noto Sans, Helvetica, Arial, sans-serif" font-size="11">.graphifyignore + enrich_graph.py</text>
+                    <text x="334" y="128" fill="#2dd4bf" font-family="ui-monospace, SFMono-Regular, Cascadia Mono, Segoe UI Mono, Menlo, Consolas, Liberation Mono, monospace" font-size="10.5">Tree-sitter --code-only (Local)</text>
 
                     <line x1="447" y1="142" x2="447" y2="180" stroke="#14b8a6" stroke-width="1.5" marker-end="url(#arrow-teal)"/>
 
                     <rect x="320" y="184" width="254" height="84" rx="3" fill="#0b1312" stroke="#14b8a6" stroke-width="1.2"/>
-                    <text x="334" y="207" fill="#fafafa" font-family="JetBrains Mono, monospace" font-size="11.5" font-weight="700">POST /api/context/pack</text>
-                    <text x="334" y="227" fill="#d4d4d8" font-family="Inter, sans-serif" font-size="11">Sparse PageRank + Hub-Penalized</text>
-                    <text x="334" y="244" fill="#d4d4d8" font-family="Inter, sans-serif" font-size="11">Kou Steiner Subgraph</text>
-                    <text x="334" y="260" fill="#2dd4bf" font-family="JetBrains Mono, monospace" font-size="10.5" font-weight="600">~38 ms  ·  ~3,500 tok XML Pack</text>
+                    <text x="334" y="207" fill="#fafafa" font-family="ui-monospace, SFMono-Regular, Cascadia Mono, Segoe UI Mono, Menlo, Consolas, Liberation Mono, monospace" font-size="11.5" font-weight="700">POST /api/context/pack</text>
+                    <text x="334" y="227" fill="#d4d4d8" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Noto Sans, Helvetica, Arial, sans-serif" font-size="11">Sparse PageRank + Hub-Penalized</text>
+                    <text x="334" y="244" fill="#d4d4d8" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Noto Sans, Helvetica, Arial, sans-serif" font-size="11">Kou Steiner Subgraph</text>
+                    <text x="334" y="260" fill="#2dd4bf" font-family="ui-monospace, SFMono-Regular, Cascadia Mono, Segoe UI Mono, Menlo, Consolas, Liberation Mono, monospace" font-size="10.5" font-weight="600">~38 ms  ·  ~3,500 tok XML Pack</text>
 
                     <!-- SPLIT CONNECTORS STAGE 2 -> STAGE 3 -->
                     <path d="M 574 214 L 610 214 L 610 98 L 642 98" stroke="#14b8a6" stroke-width="1.5" marker-end="url(#arrow-teal)"/>
@@ -56,25 +56,25 @@
 
                     <!-- STAGE 3 GROUP -->
                     <rect x="626" y="14" width="342" height="282" rx="4" fill="#0d1117" stroke="#30363d" stroke-width="1"/>
-                    <text x="640" y="37" fill="#a1a1aa" font-family="JetBrains Mono, monospace" font-size="10.5" font-weight="700" letter-spacing="0.08em">3. CALIBRATED LOW-QUOTA EXECUTION</text>
+                    <text x="640" y="37" fill="#a1a1aa" font-family="ui-monospace, SFMono-Regular, Cascadia Mono, Segoe UI Mono, Menlo, Consolas, Liberation Mono, monospace" font-size="10.5" font-weight="700" letter-spacing="0.08em">3. CALIBRATED LOW-QUOTA EXECUTION</text>
                     <line x1="626" y1="48" x2="968" y2="48" stroke="#21262d" stroke-width="1"/>
 
                     <!-- Branch A: Anti-Swarm Gate -->
                     <rect x="646" y="64" width="304" height="66" rx="3" fill="#161b22" stroke="#30363d"/>
-                    <text x="658" y="84" fill="#2dd4bf" font-family="JetBrains Mono, monospace" font-size="10.5" font-weight="700">&lt; 3 FILES / &lt; 40 LOC  ·  ANTI-SWARM GATE</text>
-                    <text x="658" y="102" fill="#e6edf3" font-family="Inter, sans-serif" font-size="11.5" font-weight="600">Direct Batch or Local GPU (Ollama)</text>
-                    <text x="658" y="119" fill="#8b949e" font-family="JetBrains Mono, monospace" font-size="10.5">0 Subagent Overhead · 0% Cloud Quota</text>
+                    <text x="658" y="84" fill="#2dd4bf" font-family="ui-monospace, SFMono-Regular, Cascadia Mono, Segoe UI Mono, Menlo, Consolas, Liberation Mono, monospace" font-size="10.5" font-weight="700">&lt; 3 FILES / &lt; 40 LOC  ·  ANTI-SWARM GATE</text>
+                    <text x="658" y="102" fill="#e6edf3" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Noto Sans, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="600">Direct Batch or Local GPU (Ollama)</text>
+                    <text x="658" y="119" fill="#8b949e" font-family="ui-monospace, SFMono-Regular, Cascadia Mono, Segoe UI Mono, Menlo, Consolas, Liberation Mono, monospace" font-size="10.5">0 Subagent Overhead · 0% Cloud Quota</text>
 
                     <!-- Branch B: Lean Swarm -->
                     <rect x="646" y="146" width="304" height="70" rx="3" fill="#161b22" stroke="#30363d"/>
-                    <text x="658" y="166" fill="#fafafa" font-family="JetBrains Mono, monospace" font-size="10.5" font-weight="700">3+ FILES  ·  ROLE-PINNED LEAN SWARM</text>
-                    <text x="658" y="185" fill="#d4d4d8" font-family="Inter, sans-serif" font-size="11.5">Disjoint File Slices + Injected XML Pack</text>
-                    <text x="658" y="203" fill="#2dd4bf" font-family="JetBrains Mono, monospace" font-size="10.5">0 Exploratory Grep / Find Turns</text>
+                    <text x="658" y="166" fill="#fafafa" font-family="ui-monospace, SFMono-Regular, Cascadia Mono, Segoe UI Mono, Menlo, Consolas, Liberation Mono, monospace" font-size="10.5" font-weight="700">3+ FILES  ·  ROLE-PINNED LEAN SWARM</text>
+                    <text x="658" y="185" fill="#d4d4d8" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Noto Sans, Helvetica, Arial, sans-serif" font-size="11.5">Disjoint File Slices + Injected XML Pack</text>
+                    <text x="658" y="203" fill="#2dd4bf" font-family="ui-monospace, SFMono-Regular, Cascadia Mono, Segoe UI Mono, Menlo, Consolas, Liberation Mono, monospace" font-size="10.5">0 Exploratory Grep / Find Turns</text>
 
                     <!-- Converge to Verification Gate -->
                     <line x1="798" y1="216" x2="798" y2="236" stroke="#14b8a6" stroke-width="1.4" marker-end="url(#arrow-teal)"/>
 
                     <rect x="646" y="240" width="304" height="42" rx="3" fill="#0b1312" stroke="#14b8a6" stroke-width="1.2"/>
-                    <text x="658" y="259" fill="#fafafa" font-family="JetBrains Mono, monospace" font-size="11" font-weight="600">1-Pass Headless QA + POST /api/refresh/{id}</text>
-                    <text x="658" y="274" fill="#8b949e" font-family="JetBrains Mono, monospace" font-size="10">Drift-free AST sync for subsequent loops</text>
+                    <text x="658" y="259" fill="#fafafa" font-family="ui-monospace, SFMono-Regular, Cascadia Mono, Segoe UI Mono, Menlo, Consolas, Liberation Mono, monospace" font-size="11" font-weight="600">1-Pass Headless QA + POST /api/refresh/{id}</text>
+                    <text x="658" y="274" fill="#8b949e" font-family="ui-monospace, SFMono-Regular, Cascadia Mono, Segoe UI Mono, Menlo, Consolas, Liberation Mono, monospace" font-size="10">Drift-free AST sync for subsequent loops</text>
                   </svg>

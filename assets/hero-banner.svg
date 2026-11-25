@@ -1,102 +1,72 @@
-<svg width="1120" height="340" viewBox="0 0 1120 340" fill="none" xmlns="http://www.w3.org/2000/svg" role="img">
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="348" viewBox="0 0 1120 348" fill="none">
   <defs>
-    <pattern id="hero-matrix" width="24" height="24" patternUnits="userSpaceOnUse">
-      <path d="M 24 0 L 0 0 0 24" fill="none" stroke="rgba(255,255,255,0.035)" stroke-width="1" shape-rendering="crispEdges"/>
+    <clipPath id="card-clip">
+      <rect x="0.5" y="0.5" width="1119" height="347" rx="6"/>
+    </clipPath>
+    <pattern id="matrix-grid" width="24" height="24" patternUnits="userSpaceOnUse">
+      <path d="M 24 0 L 0 0 0 24" fill="none" stroke="rgba(230,237,243,0.032)" stroke-width="1" shape-rendering="crispEdges"/>
     </pattern>
   </defs>
 
-  <!-- Outer Frame -->
-  <rect x="0.5" y="0.5" width="1119" height="339" fill="#0b0b0e" stroke="#27272a" stroke-width="1"/>
-  <rect x="1" y="1" width="1118" height="338" fill="url(#hero-matrix)"/>
+  <g clip-path="url(#card-clip)">
+    <rect x="0" y="0" width="624" height="348" fill="#0d1117"/>
+    <rect x="624" y="0" width="496" height="348" fill="#161b22"/>
+    <rect x="0" y="0" width="624" height="348" fill="url(#matrix-grid)"/>
+    <line x1="624.5" y1="0" x2="624.5" y2="348" stroke="#30363d" stroke-width="1" shape-rendering="crispEdges"/>
 
-  <!-- 4 CAD Corner Registration Ticks -->
-  <path d="M 0 8 L 0 0 L 8 0" stroke="#52525b" stroke-width="1.5"/>
-  <path d="M 1112 0 L 1120 0 L 1120 8" stroke="#52525b" stroke-width="1.5"/>
-  <path d="M 0 332 L 0 340 L 8 340" stroke="#52525b" stroke-width="1.5"/>
-  <path d="M 1112 340 L 1120 340 L 1120 332" stroke="#52525b" stroke-width="1.5"/>
+    <!-- Left Column -->
+    <text x="44" y="56" fill="#8b949e" font-family="ui-monospace, SFMono-Regular, Cascadia Mono, Segoe UI Mono, Menlo, Consolas, Liberation Mono, monospace" font-size="11.5" font-weight="600" letter-spacing="1.5">TREE-SITTER AST  &#183;  KOU STEINER  &#183;  ZERO MCP</text>
 
-  <!-- Left Column -->
-  <text x="44" y="54" fill="#a1a1aa" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11.5" font-weight="500" letter-spacing="1.6">
-    TREE-SITTER AST <tspan fill="#14b8a6">&#183;</tspan> KOU STEINER <tspan fill="#14b8a6">&#183;</tspan> ZERO MCP
-  </text>
+    <g transform="translate(44, 82)">
+      <rect x="0" y="0" width="46" height="46" rx="6" fill="#161b22" stroke="#30363d" stroke-width="1.2"/>
+      <path d="M9 10 L23 23 M37 10 L23 23 M9 36 L23 23 M37 36 L23 23 M23 5 L23 41 M5 23 L41 23" stroke="#21262d" stroke-width="1"/>
+      <circle cx="23" cy="23" r="5.5" fill="#0d1117" stroke="#8b949e" stroke-width="1.2" stroke-dasharray="2.5 2"/>
+      <circle cx="23" cy="23" r="1.8" fill="#8b949e"/>
+      <path d="M9 10 L16 16 L30 16 L37 10 M16 16 L16 30 L9 36 M30 16 L30 30 L37 36" stroke="#14b8a6" stroke-width="2" stroke-linecap="square"/>
+      <circle cx="16" cy="16" r="1.8" fill="#14b8a6"/>
+      <circle cx="30" cy="16" r="1.8" fill="#14b8a6"/>
+      <circle cx="16" cy="30" r="1.8" fill="#14b8a6"/>
+      <circle cx="30" cy="30" r="1.8" fill="#14b8a6"/>
+      <rect x="6" y="7" width="6" height="6" rx="1" fill="#f0f6fc"/>
+      <rect x="34" y="7" width="6" height="6" rx="1" fill="#f0f6fc"/>
+      <rect x="6" y="33" width="6" height="6" rx="1" fill="#f0f6fc"/>
+      <rect x="34" y="33" width="6" height="6" rx="1" fill="#f0f6fc"/>
+    </g>
 
-  <!-- 48x48 Geometric Steiner Emblem -->
-  <g transform="translate(44, 78)">
-    <rect x="1.5" y="1.5" width="45" height="45" rx="4" fill="#09090b" stroke="#27272a" stroke-width="1.5"/>
-    <path d="M10 11 L24 24 M38 11 L24 24 M10 37 L24 24 M38 37 L24 24 M24 6 L24 42 M6 24 L42 24" stroke="#27272a" stroke-width="1"/>
-    <circle cx="24" cy="24" r="6" fill="#09090b" stroke="#52525b" stroke-width="1.2" stroke-dasharray="2.5 2"/>
-    <circle cx="24" cy="24" r="2" fill="#52525b"/>
-    <path d="M10 11 L17 17 L31 17 L38 11 M17 17 L17 31 L10 37 M31 17 L31 31 L38 37" stroke="#14b8a6" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"/>
-    <circle cx="17" cy="17" r="2" fill="#14b8a6"/>
-    <circle cx="31" cy="17" r="2" fill="#14b8a6"/>
-    <circle cx="17" cy="31" r="2" fill="#14b8a6"/>
-    <circle cx="31" cy="31" r="2" fill="#14b8a6"/>
-    <rect x="7" y="8" width="6" height="6" fill="#fafafa" stroke="#09090b" stroke-width="1"/>
-    <rect x="35" y="8" width="6" height="6" fill="#fafafa" stroke="#09090b" stroke-width="1"/>
-    <rect x="7" y="34" width="6" height="6" fill="#fafafa" stroke="#09090b" stroke-width="1"/>
-    <rect x="35" y="34" width="6" height="6" fill="#fafafa" stroke="#09090b" stroke-width="1"/>
+    <text x="104" y="119" fill="#f0f6fc" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Noto Sans, Helvetica, Arial, sans-serif" font-size="42" font-weight="700" letter-spacing="-0.9">steiner-handoff</text>
+
+    <text x="44" y="174" fill="#c9d1d9" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Noto Sans, Helvetica, Arial, sans-serif" font-size="16.5" font-weight="400">Zero-Exploration AST Context Packing &amp; Topology-Aware</text>
+    <text x="44" y="200" fill="#c9d1d9" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Noto Sans, Helvetica, Arial, sans-serif" font-size="16.5" font-weight="400">Prompt Compilation for Coding Agents</text>
+
+    <g font-family="ui-monospace, SFMono-Regular, Cascadia Mono, Segoe UI Mono, Menlo, Consolas, Liberation Mono, monospace" font-size="11.5">
+      <rect x="44" y="270" width="156" height="34" rx="4" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+      <text x="122" y="291" text-anchor="middle" fill="#f0f6fc"><tspan fill="#2dd4bf" font-weight="700">0%</tspan> INDEX QUOTA</text>
+
+      <rect x="210" y="270" width="136" height="34" rx="4" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+      <text x="278" y="291" text-anchor="middle" fill="#f0f6fc"><tspan fill="#2dd4bf" font-weight="700">~38ms</tspan> PACK</text>
+
+      <rect x="356" y="270" width="136" height="34" rx="4" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+      <text x="424" y="291" text-anchor="middle" fill="#f0f6fc"><tspan fill="#2dd4bf" font-weight="700">0</tspan> IDLE MCP</text>
+    </g>
+
+    <!-- Right Column -->
+    <text x="666" y="56" fill="#8b949e" font-family="ui-monospace, SFMono-Regular, Cascadia Mono, Segoe UI Mono, Menlo, Consolas, Liberation Mono, monospace" font-size="11.5" font-weight="600" letter-spacing="1.4">5-FILE FEATURE  &#183;  2 REFACTOR LOOPS</text>
+    <text x="664" y="136" fill="#2dd4bf" font-family="ui-monospace, SFMono-Regular, Cascadia Mono, Segoe UI Mono, Menlo, Consolas, Liberation Mono, monospace" font-size="72" font-weight="700" letter-spacing="-2">-93.5%</text>
+    <text x="666" y="164" fill="#f0f6fc" font-family="ui-monospace, SFMono-Regular, Cascadia Mono, Segoe UI Mono, Menlo, Consolas, Liberation Mono, monospace" font-size="12.5" font-weight="600" letter-spacing="1.3">CLOUD INPUT TOKENS</text>
+
+    <g font-family="ui-monospace, SFMono-Regular, Cascadia Mono, Segoe UI Mono, Menlo, Consolas, Liberation Mono, monospace" font-size="12">
+      <rect x="666" y="194" width="410" height="38" rx="4" fill="#21262d" stroke="#30363d" stroke-width="1"/>
+      <text x="680" y="218" fill="#c9d1d9">Pull Swarm + MCP</text>
+      <text x="1062" y="218" text-anchor="end" fill="#8b949e">860k tok</text>
+
+      <rect x="666" y="244" width="410" height="38" rx="4" fill="#0d1117" stroke="#30363d" stroke-width="1" stroke-dasharray="4 3"/>
+      <rect x="667" y="245" width="27" height="36" rx="3" fill="#14b8a6"/>
+      <text x="706" y="268" fill="#f0f6fc" font-weight="600">Steiner Push (6.5%)</text>
+      <text x="1062" y="268" text-anchor="end" fill="#2dd4bf" font-weight="700">56k tok</text>
+    </g>
+
+    <text x="666" y="304" fill="#8b949e" font-family="ui-monospace, SFMono-Regular, Cascadia Mono, Segoe UI Mono, Menlo, Consolas, Liberation Mono, monospace" font-size="11">3 workers  &#183;  12k MCP schema tax  &#183;  ~45k LOC repo</text>
   </g>
 
-  <text x="108" y="116" fill="#fafafa" font-family="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="44" font-weight="800" letter-spacing="-1.6">
-    steiner-handoff
-  </text>
-
-  <text x="44" y="164" fill="#d4d4d8" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="16" font-weight="400">
-    Zero-Exploration Context Packing &amp;
-  </text>
-  <text x="44" y="188" fill="#d4d4d8" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="16" font-weight="400">
-    Topology-Aware Prompt Compilation for Coding Agents
-  </text>
-
-  <!-- 3 Sharp 1px-Bordered Monospace Pills -->
-  <rect x="44" y="254" width="142" height="34" fill="#09090b" stroke="#3f3f46" stroke-width="1"/>
-  <text x="115" y="275" text-anchor="middle" fill="#e4e4e7" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11.5" letter-spacing="0.6">
-    <tspan fill="#2dd4bf" font-weight="700">0%</tspan> INDEX QUOTA
-  </text>
-
-  <rect x="196" y="254" width="124" height="34" fill="#09090b" stroke="#3f3f46" stroke-width="1"/>
-  <text x="258" y="275" text-anchor="middle" fill="#e4e4e7" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11.5" letter-spacing="0.6">
-    <tspan fill="#2dd4bf" font-weight="700">~38ms</tspan> PACK
-  </text>
-
-  <rect x="330" y="254" width="124" height="34" fill="#09090b" stroke="#3f3f46" stroke-width="1"/>
-  <text x="392" y="275" text-anchor="middle" fill="#e4e4e7" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11.5" letter-spacing="0.6">
-    <tspan fill="#2dd4bf" font-weight="700">0</tspan> IDLE MCP
-  </text>
-
-  <!-- 1px Vertical Divider -->
-  <line x1="616" y1="0" x2="616" y2="340" stroke="#27272a" stroke-width="1"/>
-
-  <!-- Right Column -->
-  <text x="656" y="108" fill="#14b8a6" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="68" font-weight="700" letter-spacing="-2">
-    -93.5%
-  </text>
-  <text x="656" y="134" fill="#a1a1aa" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" font-weight="600" letter-spacing="1.4">
-    CLOUD INPUT TOKENS
-  </text>
-
-  <!-- Bar 1: Pull Swarm + MCP (860k tok = 100%) -->
-  <text x="656" y="176" fill="#a1a1aa" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12">
-    Pull Swarm + MCP
-  </text>
-  <text x="1076" y="176" text-anchor="end" fill="#f87171" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" font-weight="600">
-    860k tok
-  </text>
-  <rect x="656" y="186" width="420" height="14" fill="#18181b" stroke="#27272a" stroke-width="1"/>
-  <rect x="657" y="187" width="418" height="12" fill="#ef4444" fill-opacity="0.65"/>
-
-  <!-- Bar 2: Steiner Push (56k tok = 6.51%) -->
-  <text x="656" y="230" fill="#fafafa" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" font-weight="600">
-    Steiner Push (6.5%)
-  </text>
-  <text x="1076" y="230" text-anchor="end" fill="#2dd4bf" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" font-weight="700">
-    56k tok
-  </text>
-  <rect x="656" y="240" width="420" height="14" fill="#18181b" stroke="#27272a" stroke-width="1"/>
-  <rect x="657" y="241" width="27.2" height="12" fill="#14b8a6"/>
-
-  <!-- Bottom Benchmark Footnote -->
-  <text x="656" y="286" fill="#71717a" font-family="JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11">
-    5-file task &#183; 2 refactor loops &#183; 3 workers &#183; 12k MCP schema
-  </text>
+  <rect x="0.5" y="0.5" width="1119" height="347" rx="6" stroke="#30363d" stroke-width="1" fill="none"/>
 </svg>
